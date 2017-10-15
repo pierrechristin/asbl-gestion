@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.6.5.2
+-- version 4.6.6deb4
 -- https://www.phpmyadmin.net/
 --
--- Client :  127.0.0.1
--- Généré le :  Lun 28 Août 2017 à 00:16
--- Version du serveur :  10.1.21-MariaDB
--- Version de PHP :  5.6.30
+-- Client :  localhost:3306
+-- Généré le :  Dim 15 Octobre 2017 à 18:24
+-- Version du serveur :  10.1.26-MariaDB-0+deb9u1
+-- Version de PHP :  7.0.19-1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -19,6 +19,29 @@ SET time_zone = "+00:00";
 --
 -- Base de données :  `asbl`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `agenda`
+--
+
+CREATE TABLE `agenda` (
+  `id` int(4) NOT NULL,
+  `dt` date NOT NULL,
+  `lieu` varchar(100) NOT NULL,
+  `event` text NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- Contenu de la table `agenda`
+--
+
+INSERT INTO `agenda` (`id`, `dt`, `lieu`, `event`) VALUES
+(36, '2017-09-02', 'Magasin', 'Fermé'),
+(37, '2017-09-01', 'local 33', 'TFE'),
+(38, '2017-09-22', 'Distribution', 'congé bernard'),
+(39, '2017-09-11', 'fermeture complète ', 'Remise en ordre');
 
 -- --------------------------------------------------------
 
@@ -48,13 +71,15 @@ CREATE TABLE `beneficiaires` (
 --
 
 INSERT INTO `beneficiaires` (`nom`, `prenom`, `tel`, `adresse`, `nbracharge`, `heurepassage`, `ref`, `sem1`, `sem2`, `sem3`, `sem4`, `solde`, `commentaire`, `jourpassage`) VALUES
-('Picceu', 'Alexis', '+32484892317', 'rue de pÃ¢turages, 56a', 2, '13:00:00', 2, 1, 0, 0, 1, '0.00', '', 6),
-('dupont', 'maxime', '0484892317', '4, rue du village, 7340', 2, '17:45:00', 9, 0, 0, 0, 1, '0.00', '', 5),
+('Jean', 'Pierre', '+32484892317', 'rue de juillet', 2, '13:00:00', 2, 1, 0, 0, 1, '12.00', '', 5),
+('dupont', 'maxime', '0484892317', '4, rue du village, 7340', 2, '17:45:00', 9, 0, 0, 0, 1, '8.00', '', 5),
 ('Linus', 'Benjamin', '0474886092', '6, rue du village, 7340', 2, '13:15:00', 10, 0, 1, 0, 0, '17.00', '', 3),
 ('personne', 'age', '0111144', '1231321', 2, '09:00:00', 11, 1, 1, 0, 0, '2.00', '', 4),
-('Bonjour', 'bernard', '245534534', '54 rue  ici', 4, '14:30:00', 12, 1, 1, 0, 0, '0.00', '', 3),
+('leboeuf', 'bernard', '04562315', '54 rue du chemin de bois, paturâges', 4, '14:30:00', 12, 1, 1, 0, 0, '0.00', '', 2),
 ('teste', 'test', '0453543', 'non disponible', 2, '09:30:00', 13, 1, 0, 0, 0, '0.00', '', 2),
-('bonjour', 'test', '', 'gfgd', 2, '09:00:00', 14, 0, 0, 1, 0, '27.00', '', 2);
+('Mister', 'nobody', '04562315', 'anywhere', 1, '09:00:00', 14, 0, 0, 1, 0, '11.00', '', 5),
+('Dupré', 'patricque', '04562315', '22 rue couper, colfontaine', 2, '14:00:00', 15, 1, 1, 1, 1, '20.00', '', 4),
+('nom', 'prenom', '04562315', 'adresse', 2, '09:00:00', 16, 1, 0, 0, 1, '13.00', '', 3);
 
 -- --------------------------------------------------------
 
@@ -78,10 +103,10 @@ CREATE TABLE `benevoles` (
 --
 
 INSERT INTO `benevoles` (`nom`, `prenom`, `tel`, `adresse`, `secteur`, `mail`, `mdp`, `ref`) VALUES
-('testett', 'testestt', '0tttt', '0tt', 4, '', '', 1),
-('Baire', 'Nard', 'non', '123 rue test', 4, 'test@test.com', '$2y$10$TyMKZWyuRNSpy74BEYlgkuwZgIvY103TWiE56Amqbz4TlQCqZanvK', 3),
-('LE', 'Patron', '0110100101', 'central', 1, '', '', 4),
-('Admin', 'Admin', '0477070070', '97 pomme de terre', 1, 'admin@admin.com', '$2y$10$BDb1JGNKhHKuYT7STQQcXOzoq8cU1UM5jOMGbMl56MpUQFSfrUm4O', 5);
+('Baire', 'Nard', 'non', '123 rue test', 4, 'bernard@test.com', '$2y$10$qtz1507drYGLTKM6FnBPueVXDICLr63XSIIvU.GVb9OJmL3xkl/j6', 3),
+('LE', 'Patron', '0110100101', 'central', 1, 'test@test.com', '$2y$10$sg8PXxThDZ9qg1qFns/VZuvZgrr7YpWuMNZ6lV1E2OaoccYtRcWM6', 4),
+('Admin', 'Admin', '0477070070', '97 pomme de terre', 2, 'admin@admin.com', '$2y$10$BDb1JGNKhHKuYT7STQQcXOzoq8cU1UM5jOMGbMl56MpUQFSfrUm4O', 5),
+('Picceu', 'Marielle', '04562315', '17 rue stik', 3, 'marielle@asblensemble.com', '$2y$10$qqpfndrmQEFVnuAwlgLdnulmspjG44jK3mltAd99guUiDTal94oJi', 6);
 
 -- --------------------------------------------------------
 
@@ -124,11 +149,21 @@ INSERT INTO `districolis` (`identifiant`, `refbeneficiaire`, `montantpaye`, `dat
 (35, 10, '4.00', '2017-06-14 09:29:00', '<p>TESTT</p>\r\n', '12.00', 0, 1, 0, 0, 2),
 (36, 10, '9.00', '2017-06-21 09:35:00', NULL, '17.00', 0, 1, 0, 0, 2),
 (37, 14, '11.00', '2017-07-11 21:05:00', NULL, '27.00', 0, 0, 1, 0, 2),
-(38, 11, '5.00', '2017-08-17 22:04:00', NULL, '2.00', 1, 1, 0, 0, 2);
+(38, 11, '5.00', '2017-08-17 22:04:00', NULL, '2.00', 1, 1, 0, 0, 2),
+(40, 15, '4.00', '2017-09-08 05:20:00', NULL, '0.00', 1, 1, 1, 1, 2),
+(42, 9, '4.00', '2017-09-01 12:04:00', NULL, '8.00', 0, 0, 0, 1, 2),
+(43, 2, '16.00', '2017-09-01 12:05:00', NULL, '12.00', 1, 0, 0, 1, 2),
+(44, 15, '12.00', '2017-09-07 16:33:00', NULL, '20.00', 1, 1, 1, 1, 2);
 
 --
 -- Index pour les tables exportées
 --
+
+--
+-- Index pour la table `agenda`
+--
+ALTER TABLE `agenda`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Index pour la table `beneficiaires`
@@ -156,20 +191,25 @@ ALTER TABLE `districolis`
 --
 
 --
+-- AUTO_INCREMENT pour la table `agenda`
+--
+ALTER TABLE `agenda`
+  MODIFY `id` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+--
 -- AUTO_INCREMENT pour la table `beneficiaires`
 --
 ALTER TABLE `beneficiaires`
-  MODIFY `ref` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `ref` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 --
 -- AUTO_INCREMENT pour la table `benevoles`
 --
 ALTER TABLE `benevoles`
-  MODIFY `ref` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `ref` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT pour la table `districolis`
 --
 ALTER TABLE `districolis`
-  MODIFY `identifiant` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'identifie de manière unique un colis', AUTO_INCREMENT=39;
+  MODIFY `identifiant` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'identifie de manière unique un colis', AUTO_INCREMENT=45;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

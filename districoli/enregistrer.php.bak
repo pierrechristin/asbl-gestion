@@ -44,9 +44,6 @@ $base->exec($sql);
 
 //on retourne a la page benevoles
 $page="Location: ./districoli.php";
-//echo $sql;
-header($page);
-?>
-<?php
-include_once("../footer.php");
+echo $sql;
+//header($page);
 ?>

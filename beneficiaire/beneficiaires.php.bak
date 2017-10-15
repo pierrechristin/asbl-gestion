@@ -48,7 +48,7 @@ if (isset($_GET['prenomc'])) {$prenomc=$_GET['prenomc'];}
 	<div class='blocgauche'>
 	<div align='center'>
 		Ajouter un beneficiaire :
-		<a href='beneficiaires.php?module=2'>
+		<a href='beneficiaires.php?module=2&reference=<?php echo $chaine['ref'];?>'>
 			<img src='../images/inserer.jpg' width=20 height=20 title='Inserer une fiche beneficiaire'/>
 		</a>
 	</div>
@@ -250,7 +250,4 @@ if ($module==3){echo "<tr><td colspan=3><input type='submit' value='Confirmer la
 } 
 
 
-?>
-<?php
-include_once("../footer.php");
 ?>

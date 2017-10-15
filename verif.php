@@ -31,8 +31,8 @@ function autorisation( $mail, $mdp)
 }
 
 $_SESSION['dsn1']="mysql:host=localhost;dbname=asbl";
-$_SESSION['loginbdd']="root";
-$_SESSION['pwdbdd']="";
+$_SESSION['loginbdd']="cmsuser";
+$_SESSION['pwdbdd']="ensemble1";
 
 
 
@@ -55,7 +55,7 @@ if ( isset( $_POST['mail'] ) )
 	{
 		//traitement de l'utilisateur non autorisé
 		//ici redirection vers la page autehntification
-		header('location: auth.html');
+		header('location: auth.php');
 	}
 
 }
@@ -64,7 +64,7 @@ if ( isset( $_POST['mail'] ) )
 
  	//traitement du cas ou il n'y a pas eu saisie du login et du password (acces direct à la page verif.php)
 	//ici redirection vers la page d'autehntification
-	header('location: auth.html');
+	header('location: auth.php');
 	
 }
 

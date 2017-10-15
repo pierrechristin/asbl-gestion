@@ -2,8 +2,8 @@
 include('validation.php');
 
 $_SESSION['dsn1']="mysql:host=localhost;dbname=asbl";
-$_SESSION['loginbdd']="root";
-$_SESSION['pwdbdd']="";
+$_SESSION['loginbdd']="cmsuser";
+$_SESSION['pwdbdd']="ensemble1";
 
 function ouvrebase()
 {
@@ -21,21 +21,21 @@ return $base;
     <title>Aide alimentaire</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
 	 <link rel="stylesheet" href="http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/css/stylelavande.css" />
+	 <link rel="stylesheet" href="http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/agenda/style.css" type="text/css" />
+	
 </head>
-<body>
-	<div class='entete'>
-	<img src="http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/images/loup.jpg" /> 
-	</div>
-	<div class='bloclarge' align='center'>
-		<ul class='menuhorizontal'>
-			<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/districoli/districoli.php'>Distribution colis</a></li>
-			<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/magasin/magasin.php'>Magasin</a></li>	
-			<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/beneficiaire/beneficiaires.php'>Beneficiaire</a></li>
-			<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/benevole/benevole.php'>Benevole</a></li>
-			<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/stat/stat.php'>Statistiques</a></li>
-			<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/agenda/agenda.php'>Agenda</a></li>
-			<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/deco.php'>Deconnexion</a></li>
-		</ul>
-	</div>
-	</div>
-</body>
+	<body>
+		<div class='entete'>
+		<img src="http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/images/loup.jpg" /> 
+		</div>
+		<div class='bloclarge' align='center'>
+			<ul class='menuhorizontal'>
+				<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/districoli/districoli.php'>Distribution colis</a></li>
+				<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/beneficiaire/beneficiaires.php'>Beneficiaire</a></li>
+				<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/benevole/benevole.php'>Benevole</a></li>
+				<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/stat/stat.php'>Statistiques</a></li>
+				<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/agenda/agenda.php'>Agenda</a></li>
+				<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/deco.php'>Deconnexion</a></li>
+			</ul>
+		</div>
+		</div>

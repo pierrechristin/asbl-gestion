@@ -17,14 +17,11 @@ $chaine=$resultat->fetch();
 $page = $page.'?module=' . 1;
 $page = $page.'&sommeColisVendus=' . $chaine['sommeColisVendus'];
 $page = $page.'&nbColisVendus=' . $chaine['nbColisVendus'];
-$page = $page.'&prixMoyenColisVendu=' . ($chaine['sommeColisVendus'] / $chaine['nbColisVendus']);
+$page = $page.'&prixMoyenColisVendu=' . (sommeColisVendus / nbColisVendus);
 }
 
 
 //echo $sql;
 //on retourne a la page stat
 header($page);
-?>
-<?php
-include_once("../footer.php");
 ?>
