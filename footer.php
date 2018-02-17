@@ -1,5 +1,2 @@
-		<div class="bloclarge" style="text-align:center"> 
-		<p> By PixCorp version : 2.0.0 beta </p>
-		</div>
-	</body>
-</html>	
+<?php include_once('commun/mentionsLegales.php'); ?>
+<?php include_once('commun/footerCommun.php'); ?>
