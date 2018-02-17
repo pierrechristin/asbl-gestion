@@ -3,6 +3,7 @@
 include_once("../index.php");
 $base=ouvrebase();
 $module=0;
+$montantColis=0;
 $montantPaye=0;
 $nbracharge=0;
 $sem1=0;
@@ -33,6 +34,22 @@ include_once("../menuJour.php");
 <?php
 	if($module<>0)
 	{
+		if ($referenceColis<>0) {
+			// Le colis existe déjà, on charge ses informations.
+			$sql2="select * from districolis where identifiant=".$referenceColis;
+			$resultat2=$base->query($sql2);
+			$chaine2=$resultat2->fetch();
+			$montantColis=$chaine2['montantcolis'];
+			$montantPaye=$chaine2['montantpaye'];
+			$heureDistribution=date('H',strtotime($chaine2['datedistri']));
+			$minuteDistribution=date('i',strtotime($chaine2['datedistri']));
+		}
+		else {
+			// Le colis n'existe pas encore, on charge les informations par défaut.
+			// TODO : Chargement montant colis
+			$heureDistribution=date('H');
+			$minuteDistribution=date('i');
+		}
 ?>
 	<div class='bloclarge' >
 		<form name='fiche' action='enregistrer.php' enctype='multipart/form-data' method='POST'>
@@ -40,44 +57,49 @@ include_once("../menuJour.php");
 			<table align='center' >
 				<tr>
 <?php
-				if($module==1 || $module==3)
-				{
+					if($module==1 || $module==3)
+					{
 ?>
-				<td>
-					<label>Montant payé</label>
-					<input type='number' name='montantpaye' value='<?php echo $montantPaye?>'/>
-				</td>
-				
-				<td>Heure passage</td>
+					<td>
+						<label>Montant colis</label>
+						<input type='number' name='montantcolis' value='<?php echo $montantColis?>'/>
+					</td>
+					
+					<td>
+						<label>Montant payé</label>
+						<input type='number' name='montantpaye' value='<?php echo $montantPaye?>'/>
+					</td>
+					
+					<td>Heure passage</td>
 					<td>
 						<SELECT name="heureDistribution" size="1">
 							<?php for ($heure=0 ; $heure < 24 ; $heure = $heure + 1) { ?>
-								<OPTION  <?php if($heure==date("H")){ echo "selected";} ?>> <?php echo $heure; ?>
+								<OPTION  <?php if($heure==$heureDistribution){ echo "selected";} ?>> <?php echo $heure; ?>
 							<?php } ?>
 						</SELECT>
 						H
 						<SELECT name="minuteDistribution" size="1">
 							<?php for ($minute=0 ; $minute < 60 ; $minute = $minute + 1) { ?>
-							<OPTION  <?php if($minute==date("i")){ echo "selected";} ?>> <?php echo $minute; ?>
+							<OPTION  <?php if($minute==$minuteDistribution){ echo "selected";} ?>> <?php echo $minute; ?>
 							<?php } ?>
 						</SELECT>
 						M
 					</td>
 <?php
-				} else if ($module==4)
-				{
+					} else if ($module==4)
+					{
 ?>
-				<textarea cols="80" class="ckeditor" id="commentaire" name="commentaire" rows="10"> </textarea>
-				<script>
+					<textarea cols="80" class="ckeditor" id="commentaire" name="commentaire" rows="10"> </textarea>
+					<script>
 							// Replace the <textarea id="topic"> with a CKEditor
 							// instance, using default configuration.
 							CKEDITOR.replace( 'commentaire' );
 
 							CKEDITOR.instances.commentaire.setData( '<p><?php echo $commentaire;?></p>',    function()
-				{
-				this.checkDirty();  // true
-				});
-				</script>
+								{
+								this.checkDirty();  // true
+								});
+					</script>
 <?php
 				}
 ?>
@@ -98,7 +120,7 @@ include_once("../menuJour.php");
 			<input type='hidden' name='sem2' value='<?php echo $sem2;?>'/>
 			<input type='hidden' name='sem3' value='<?php echo $sem3;?>'/>
 			<input type='hidden' name='sem4' value='<?php echo $sem4;?>'/>
-			<input type='hidden' name='solde' value='<?php echo ($solde - 4);?>'/>
+			<input type='hidden' name='solde' value='<?php echo ($solde - $montantColis);?>'/>
 			<input type='hidden' name='referenceColis' value='<?php echo $referenceColis;?>'/>
 		</form>
 	</div>
@@ -121,11 +143,43 @@ include_once("../menuJour.php");
 
 <?php
 $sql="select * from"; 
-$sql=$sql."(select districolis.identifiant, beneficiaires.ref, DATE(districolis.datedistri) as jourpassage, TIME(districolis.datedistri) as heurepassage, beneficiaires.nom, beneficiaires.prenom, districolis.nbracharge, districolis.sem1, districolis.sem2, districolis.sem3, districolis.sem4, districolis.montantpaye, districolis.solde, districolis.commentaire from beneficiaires inner join districolis on beneficiaires.ref = districolis.refbeneficiaire where DATE(districolis.datedistri)='".date("Y-m-d", mktime(0, 0, 0, 1, $jourSelectionne))."'" ;
+$sql=$sql."(select districolis.identifiant,
+					beneficiaires.ref,
+					DATE(districolis.datedistri) as jourpassage,
+					TIME(districolis.datedistri) as heurepassage,
+					beneficiaires.nom,
+					beneficiaires.prenom,
+					districolis.nbracharge,
+					districolis.sem1,
+					districolis.sem2,
+					districolis.sem3,
+					districolis.sem4,
+					districolis.montantcolis,
+					districolis.montantpaye,
+					districolis.solde,
+					districolis.commentaire
+				from beneficiaires inner join districolis on beneficiaires.ref = districolis.refbeneficiaire
+				where DATE(districolis.datedistri)='".date("Y-m-d", mktime(0, 0, 0, 1, $jourSelectionne))."'" ;
 //tri par heure de passage dans la requête sql
 //$sql=$sql." order by beneficiaires.heurepassage asc ";
 $sql=$sql." union ";
-$sql=$sql."select 0, ref, jourpassage, heurepassage, nom, prenom, nbracharge, sem1, sem2, sem3, sem4, null, solde, null from beneficiaires where jourpassage=";
+$sql=$sql."select 0,
+					ref,
+					jourpassage,
+					heurepassage,
+					nom,
+					prenom,
+					nbracharge,
+					sem1,
+					sem2,
+					sem3,
+					sem4,
+					null,
+					null,
+					solde,
+					null
+				from beneficiaires
+				where jourpassage=";
 //on n'affiche que les personnes qui doivent passer le jour de la semaine sélectionné
 $sql=$sql.date("N", mktime(0, 0, 0, 1, $jourSelectionne)).")";
 $sql=$sql."as colisjour group by nom, prenom";
@@ -168,7 +222,7 @@ while ($chaine=$resultat->fetch())
 				if( isset($chaine['montantpaye']) == false)
 				{
 ?>
-					<a href='districoli.php?module=1<?php echo ('&reference=' . $chaine['ref'] . '&nbracharge=' . $chaine['nbracharge'] . '&sem1=' . $chaine['sem1'] . '&sem2=' . $chaine['sem2'] . '&sem3=' . $chaine['sem3'] . '&sem4=' . $chaine['sem4'] . '&solde=' . $chaine['solde'] . '&jourSelectionne=' . $jourSelectionne);?>'>
+					<a href='districoli.php?module=1<?php echo ('&reference=' . $chaine['ref'] . '&nbracharge=' . $chaine['nbracharge'] . '&sem1=' . $chaine['sem1'] . '&sem2=' . $chaine['sem2'] . '&sem3=' . $chaine['sem3'] . '&sem4=' . $chaine['sem4'] . '&solde=' . $chaine['solde'] . '&jourSelectionne=' . $jourSelectionne . '&montantColis=' . $montantColis);?>'>
 						<img src='../images/inserer.jpg' width=20 height=20 title='Créer colis'/>
 					</a>
 <?php
