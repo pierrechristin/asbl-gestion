@@ -24,7 +24,7 @@ for($i = 1; $i <= 365; $i++) {
 	if($week == $w) { 
 		//semaine trouvée
 		for($d = 0; $d < 7; $d++) {
-			if ($d==2 || $d==3 || $d==4 || $d==5) {
+			if ($d==5) { // Pour dire que c'est uniquement le Vendredi
  ?>
 			<li>
 				<a href='<?php echo $nomPage ?>.php?jourSelectionne=<?php echo ($i + $d-1);?>'<?php if ($i+$d-1==$jourSelectionne){echo('style="font-weight:bold;"');}?>>
