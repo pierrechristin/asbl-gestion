@@ -1,13 +1,15 @@
 -- phpMyAdmin SQL Dump
--- version 4.6.6deb4
+-- version 4.7.4
 -- https://www.phpmyadmin.net/
 --
--- Client :  localhost:3306
--- Généré le :  Dim 15 Octobre 2017 à 18:24
--- Version du serveur :  10.1.26-MariaDB-0+deb9u1
--- Version de PHP :  7.0.19-1
+-- Hôte : 127.0.0.1
+-- Généré le :  jeu. 09 nov. 2017 à 18:48
+-- Version du serveur :  10.1.28-MariaDB
+-- Version de PHP :  7.1.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -34,7 +36,7 @@ CREATE TABLE `agenda` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
--- Contenu de la table `agenda`
+-- Déchargement des données de la table `agenda`
 --
 
 INSERT INTO `agenda` (`id`, `dt`, `lieu`, `event`) VALUES
@@ -67,7 +69,7 @@ CREATE TABLE `beneficiaires` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ROW_FORMAT=COMPACT;
 
 --
--- Contenu de la table `beneficiaires`
+-- Déchargement des données de la table `beneficiaires`
 --
 
 INSERT INTO `beneficiaires` (`nom`, `prenom`, `tel`, `adresse`, `nbracharge`, `heurepassage`, `ref`, `sem1`, `sem2`, `sem3`, `sem4`, `solde`, `commentaire`, `jourpassage`) VALUES
@@ -99,12 +101,12 @@ CREATE TABLE `benevoles` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ROW_FORMAT=COMPACT;
 
 --
--- Contenu de la table `benevoles`
+-- Déchargement des données de la table `benevoles`
 --
 
 INSERT INTO `benevoles` (`nom`, `prenom`, `tel`, `adresse`, `secteur`, `mail`, `mdp`, `ref`) VALUES
 ('Baire', 'Nard', 'non', '123 rue test', 4, 'bernard@test.com', '$2y$10$qtz1507drYGLTKM6FnBPueVXDICLr63XSIIvU.GVb9OJmL3xkl/j6', 3),
-('LE', 'Patron', '0110100101', 'central', 1, 'test@test.com', '$2y$10$sg8PXxThDZ9qg1qFns/VZuvZgrr7YpWuMNZ6lV1E2OaoccYtRcWM6', 4),
+('LE', 'Patron', '0110100101', 'central', 1, 'test@test.com', '$2y$10$tEUhb7Pw82LdRbSY3qRFi.8G.cABT4Yfwj/kmkm/7lVwbX.gNzYq2', 4),
 ('Admin', 'Admin', '0477070070', '97 pomme de terre', 2, 'admin@admin.com', '$2y$10$BDb1JGNKhHKuYT7STQQcXOzoq8cU1UM5jOMGbMl56MpUQFSfrUm4O', 5),
 ('Picceu', 'Marielle', '04562315', '17 rue stik', 3, 'marielle@asblensemble.com', '$2y$10$qqpfndrmQEFVnuAwlgLdnulmspjG44jK3mltAd99guUiDTal94oJi', 6);
 
@@ -117,6 +119,7 @@ INSERT INTO `benevoles` (`nom`, `prenom`, `tel`, `adresse`, `secteur`, `mail`, `
 CREATE TABLE `districolis` (
   `identifiant` bigint(20) UNSIGNED NOT NULL COMMENT 'identifie de manière unique un colis',
   `refbeneficiaire` bigint(20) UNSIGNED NOT NULL COMMENT 'Indique quel client a acheté ce colis',
+  `montantcolis` decimal(10,2) NOT NULL COMMENT 'Somme qu''il a été demandé au bénéficiaire pour payer le colis.',
   `montantpaye` decimal(10,2) NOT NULL COMMENT 'Montant payé le jour où la personne à acheté le colis',
   `datedistri` datetime NOT NULL,
   `commentaire` text COLLATE ascii_bin,
@@ -129,34 +132,53 @@ CREATE TABLE `districolis` (
 ) ENGINE=InnoDB DEFAULT CHARSET=ascii COLLATE=ascii_bin;
 
 --
--- Contenu de la table `districolis`
+-- Déchargement des données de la table `districolis`
 --
 
-INSERT INTO `districolis` (`identifiant`, `refbeneficiaire`, `montantpaye`, `datedistri`, `commentaire`, `solde`, `sem1`, `sem2`, `sem3`, `sem4`, `nbracharge`) VALUES
-(1, 2, '3.00', '2017-03-04 13:15:00', '<p><strong>coucou !</strong></p>\r\n', '0.00', 1, 0, 0, 0, 2),
-(2, 9, '3.00', '2017-03-04 13:15:00', '<p><strong>coucou !</strong></p>\r\n', '0.00', 1, 0, 0, 0, 2),
-(3, 10, '3.00', '2017-03-07 13:00:00', NULL, '0.00', 1, 0, 0, 0, 2),
-(8, 9, '5.00', '2017-05-19 00:14:36', '<p>&amp;variablePourrie=null</p>\r\n', '1.00', 0, 0, 0, 1, 2),
-(11, 11, '5.00', '2017-05-22 11:48:08', '<p>Tets</p>\r\n\r\n<p>&nbsp;</p>\r\n', '1.00', 1, 1, 0, 0, 2),
-(12, 13, '12.00', '2017-06-12 21:36:13', NULL, '8.00', 1, 0, 0, 0, 2),
-(13, 13, '12.00', '2017-06-12 21:36:55', NULL, '8.00', 1, 0, 0, 0, 2),
-(14, 10, '12.00', '2017-06-12 21:38:13', NULL, '20.00', 0, 1, 0, 0, 2),
-(15, 13, '0.00', '2017-06-12 21:39:42', NULL, '6.00', 1, 0, 0, 0, 2),
-(25, 11, '4.00', '2017-06-15 22:19:46', NULL, '0.00', 1, 1, 0, 0, 2),
-(28, 9, '4.00', '2017-06-16 00:00:00', NULL, '0.00', 0, 0, 0, 1, 2),
-(31, 13, '12.00', '2017-06-20 23:00:00', NULL, '18.00', 1, 0, 0, 0, 2),
-(34, 13, '6.00', '2017-06-13 23:06:00', NULL, '0.00', 1, 0, 0, 0, 2),
-(35, 10, '4.00', '2017-06-14 09:29:00', '<p>TESTT</p>\r\n', '12.00', 0, 1, 0, 0, 2),
-(36, 10, '9.00', '2017-06-21 09:35:00', NULL, '17.00', 0, 1, 0, 0, 2),
-(37, 14, '11.00', '2017-07-11 21:05:00', NULL, '27.00', 0, 0, 1, 0, 2),
-(38, 11, '5.00', '2017-08-17 22:04:00', NULL, '2.00', 1, 1, 0, 0, 2),
-(40, 15, '4.00', '2017-09-08 05:20:00', NULL, '0.00', 1, 1, 1, 1, 2),
-(42, 9, '4.00', '2017-09-01 12:04:00', NULL, '8.00', 0, 0, 0, 1, 2),
-(43, 2, '16.00', '2017-09-01 12:05:00', NULL, '12.00', 1, 0, 0, 1, 2),
-(44, 15, '12.00', '2017-09-07 16:33:00', NULL, '20.00', 1, 1, 1, 1, 2);
+INSERT INTO `districolis` (`identifiant`, `refbeneficiaire`, `montantcolis`, `montantpaye`, `datedistri`, `commentaire`, `solde`, `sem1`, `sem2`, `sem3`, `sem4`, `nbracharge`) VALUES
+(1, 2, '0.00', '3.00', '2017-03-04 13:15:00', '<p><strong>coucou !</strong></p>\r\n', '0.00', 1, 0, 0, 0, 2),
+(2, 9, '0.00', '3.00', '2017-03-04 13:15:00', '<p><strong>coucou !</strong></p>\r\n', '0.00', 1, 0, 0, 0, 2),
+(3, 10, '0.00', '3.00', '2017-03-07 13:00:00', NULL, '0.00', 1, 0, 0, 0, 2),
+(8, 9, '0.00', '5.00', '2017-05-19 00:14:36', '<p>&amp;variablePourrie=null</p>\r\n', '1.00', 0, 0, 0, 1, 2),
+(11, 11, '0.00', '5.00', '2017-05-22 11:48:08', '<p>Tets</p>\r\n\r\n<p>&nbsp;</p>\r\n', '1.00', 1, 1, 0, 0, 2),
+(12, 13, '0.00', '12.00', '2017-06-12 21:36:13', NULL, '8.00', 1, 0, 0, 0, 2),
+(13, 13, '0.00', '12.00', '2017-06-12 21:36:55', NULL, '8.00', 1, 0, 0, 0, 2),
+(14, 10, '0.00', '12.00', '2017-06-12 21:38:13', NULL, '20.00', 0, 1, 0, 0, 2),
+(15, 13, '0.00', '0.00', '2017-06-12 21:39:42', NULL, '6.00', 1, 0, 0, 0, 2),
+(25, 11, '0.00', '4.00', '2017-06-15 22:19:46', NULL, '0.00', 1, 1, 0, 0, 2),
+(28, 9, '0.00', '4.00', '2017-06-16 00:00:00', NULL, '0.00', 0, 0, 0, 1, 2),
+(31, 13, '0.00', '12.00', '2017-06-20 23:00:00', NULL, '18.00', 1, 0, 0, 0, 2),
+(34, 13, '0.00', '6.00', '2017-06-13 23:06:00', NULL, '0.00', 1, 0, 0, 0, 2),
+(35, 10, '0.00', '4.00', '2017-06-14 09:29:00', '<p>TESTT</p>\r\n', '12.00', 0, 1, 0, 0, 2),
+(36, 10, '0.00', '9.00', '2017-06-21 09:35:00', NULL, '17.00', 0, 1, 0, 0, 2),
+(37, 14, '0.00', '11.00', '2017-07-11 21:05:00', NULL, '27.00', 0, 0, 1, 0, 2),
+(38, 11, '0.00', '5.00', '2017-08-17 22:04:00', NULL, '2.00', 1, 1, 0, 0, 2),
+(40, 15, '0.00', '4.00', '2017-09-08 05:20:00', NULL, '0.00', 1, 1, 1, 1, 2),
+(42, 9, '0.00', '4.00', '2017-09-01 12:04:00', NULL, '8.00', 0, 0, 0, 1, 2),
+(43, 2, '0.00', '16.00', '2017-09-01 12:05:00', NULL, '12.00', 1, 0, 0, 1, 2),
+(44, 15, '0.00', '12.00', '2017-09-07 16:33:00', NULL, '20.00', 1, 1, 1, 1, 2);
+
+-- --------------------------------------------------------
 
 --
--- Index pour les tables exportées
+-- Structure de la table `parametres`
+--
+
+CREATE TABLE `parametres` (
+  `cle` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `valeur` varchar(256) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(512) COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Paramètres du site de gestion';
+
+--
+-- Déchargement des données de la table `parametres`
+--
+
+INSERT INTO `parametres` (`cle`, `valeur`, `description`) VALUES
+('MONTANT_COLIS_PAR_DEFAUT', '4', '');
+
+--
+-- Index pour les tables déchargées
 --
 
 --
@@ -187,7 +209,13 @@ ALTER TABLE `districolis`
   ADD KEY `refbeneficiaire` (`refbeneficiaire`);
 
 --
--- AUTO_INCREMENT pour les tables exportées
+-- Index pour la table `parametres`
+--
+ALTER TABLE `parametres`
+  ADD PRIMARY KEY (`cle`);
+
+--
+-- AUTO_INCREMENT pour les tables déchargées
 --
 
 --
@@ -195,21 +223,26 @@ ALTER TABLE `districolis`
 --
 ALTER TABLE `agenda`
   MODIFY `id` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+
 --
 -- AUTO_INCREMENT pour la table `beneficiaires`
 --
 ALTER TABLE `beneficiaires`
   MODIFY `ref` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+
 --
 -- AUTO_INCREMENT pour la table `benevoles`
 --
 ALTER TABLE `benevoles`
   MODIFY `ref` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
 --
 -- AUTO_INCREMENT pour la table `districolis`
 --
 ALTER TABLE `districolis`
   MODIFY `identifiant` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'identifie de manière unique un colis', AUTO_INCREMENT=45;
+COMMIT;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
