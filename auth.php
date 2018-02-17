@@ -6,13 +6,13 @@
 	<script src="../ckeditor/ckeditor.js"></script>
     <title>Aide alimentaire</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-	 <link rel="stylesheet" href="http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/css/stylelavande.css" />
-	 <link rel="stylesheet" href="http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/agenda/style.css" type="text/css" />
+	 <link rel="stylesheet" href="http://<?php echo $_SERVER['HTTP_HOST'] ?>/asbl-gestion/css/stylelavande.css" />
+	 <link rel="stylesheet" href="http://<?php echo $_SERVER['HTTP_HOST'] ?>/asbl-gestion/agenda/style.css" type="text/css" />
 	
 </head>
 <body>
 	<div class='entete'>
-	<img src="http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/images/loup.jpg" /> 
+	<img src="http://<?php echo $_SERVER['HTTP_HOST'] ?>/asbl-gestion/images/loup.jpg" /> 
 	</div>
 	<div class='bloclarge' align='center'>
 		<form method="post" action="verif.php">
