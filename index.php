@@ -34,7 +34,7 @@ return $base;
 				<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/beneficiaire/beneficiaires.php'>Beneficiaire</a></li>
 				<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/benevole/benevole.php'>Benevole</a></li>
 				<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/stat/stat.php'>Statistiques</a></li>
-				<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/agenda/agenda.php'>Agenda</a></li>
+				<!--<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/agenda/agenda.php'>Agenda</a></li>-->
 				<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/deco.php'>Deconnexion</a></li>
 			</ul>
 		</div>
