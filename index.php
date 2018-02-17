@@ -20,22 +20,22 @@ return $base;
 	<script src="../ckeditor/ckeditor.js"></script>
     <title>Aide alimentaire</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-	 <link rel="stylesheet" href="http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/css/stylelavande.css" />
-	 <link rel="stylesheet" href="http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/agenda/style.css" type="text/css" />
+	 <link rel="stylesheet" href="http://<?php echo $_SERVER['HTTP_HOST'] ?>/asbl-gestion/css/stylelavande.css" />
+	 <link rel="stylesheet" href="http://<?php echo $_SERVER['HTTP_HOST'] ?>/asbl-gestion/agenda/style.css" type="text/css" />
 	
 </head>
 	<body>
 		<div class='entete'>
-		<img src="http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/images/loup.jpg" /> 
+		<img src="http://<?php echo $_SERVER['HTTP_HOST'] ?>/asbl-gestion/images/loup.jpg" /> 
 		</div>
 		<div class='bloclarge' align='center'>
 			<ul class='menuhorizontal'>
-				<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/districoli/districoli.php'>Distribution colis</a></li>
-				<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/beneficiaire/beneficiaires.php'>Beneficiaire</a></li>
-				<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/benevole/benevole.php'>Benevole</a></li>
-				<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/stat/stat.php'>Statistiques</a></li>
-				<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/agenda/agenda.php'>Agenda</a></li>
-				<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/tfe/deco.php'>Deconnexion</a></li>
+				<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/asbl-gestion/districoli/districoli.php'>Distribution colis</a></li>
+				<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/asbl-gestion/beneficiaire/beneficiaires.php'>Beneficiaire</a></li>
+				<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/asbl-gestion/benevole/benevole.php'>Benevole</a></li>
+				<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/asbl-gestion/stat/stat.php'>Statistiques</a></li>
+				<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/asbl-gestion/agenda/agenda.php'>Agenda</a></li>
+				<li><a href='http://<?php echo $_SERVER['HTTP_HOST'] ?>/asbl-gestion/deco.php'>Deconnexion</a></li>
 			</ul>
 		</div>
 		</div>
