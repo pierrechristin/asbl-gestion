@@ -10,7 +10,7 @@ $sem1=0;
 $sem2=0;
 $sem3=0;
 $sem4=0;
-$solde=0;
+$solde_colis=0;
 $reference=0;
 $referenceColis=0;
 $commentaire=0;
@@ -21,7 +21,7 @@ if (isset($_GET['sem1'])) {$sem1=$_GET['sem1'];}
 if (isset($_GET['sem2'])) {$sem2=$_GET['sem2'];}
 if (isset($_GET['sem3'])) {$sem3=$_GET['sem3'];}
 if (isset($_GET['sem4'])) {$sem4=$_GET['sem4'];}
-if (isset($_GET['solde'])) {$solde=$_GET['solde'];}
+if (isset($_GET['solde_colis'])) {$solde_colis=$_GET['solde_colis'];}
 if (isset($_GET['reference'])) {$reference=$_GET['reference'];}
 if (isset($_GET['referenceColis'])) {$referenceColis=$_GET['referenceColis'];}
 if (isset($_GET['commentaire'])) {$commentaire=$_GET['commentaire'];}
@@ -39,16 +39,24 @@ include_once("../menuJour.php");
 			$sql2="select * from districolis where identifiant=".$referenceColis;
 			$resultat2=$base->query($sql2);
 			$chaine2=$resultat2->fetch();
-			$montantColis=$chaine2['montantcolis'];
-			$montantPaye=$chaine2['montantpaye'];
+			
+			$commentaire=$chaine2['commentaire'];
 			$heureDistribution=date('H',strtotime($chaine2['datedistri']));
 			$minuteDistribution=date('i',strtotime($chaine2['datedistri']));
+			$montantColis=$chaine2['montantcolis'];
+			$montantPaye=$chaine2['montantpaye'];
 		}
 		else {
 			// Le colis n'existe pas encore, on charge les informations par défaut.
-			// TODO : Chargement montant colis
+			$commentaire="";
 			$heureDistribution=date('H');
 			$minuteDistribution=date('i');
+			
+			// Chargement montant colis
+			$sqlMontantColis = "SELECT valeur FROM parametres WHERE cle = 'MONTANT_COLIS_PAR_DEFAUT'";
+			$resultatMontantColis=$base->query($sqlMontantColis);
+			$chaineMontantColis=$resultatMontantColis->fetch();
+			$montantColis=$chaineMontantColis['valeur'];
 		}
 ?>
 	<div class='bloclarge' >
@@ -89,27 +97,30 @@ include_once("../menuJour.php");
 					} else if ($module==4)
 					{
 ?>
-					<textarea cols="80" class="ckeditor" id="commentaire" name="commentaire" rows="10"> </textarea>
-					<script>
-							// Replace the <textarea id="topic"> with a CKEditor
-							// instance, using default configuration.
-							CKEDITOR.replace( 'commentaire' );
-
-							CKEDITOR.instances.commentaire.setData( '<p><?php echo $commentaire;?></p>',    function()
-								{
-								this.checkDirty();  // true
-								});
-					</script>
+					<td colspan=4 align=center>
+						<textarea id="commentaire" name="commentaire" class="ckeditor" cols="80" rows="10">
+							<?php echo $commentaire;?>
+						</textarea>
+						<script>
+								// Replace the <textarea id="topic"> with a CKEditor
+								// instance, using default configuration.
+								CKEDITOR.replace( 'commentaire' );
+						</script>
+					</td>
 <?php
 				}
 ?>
+				</tr>
+				<tr>
+					<td colspan=4 align=center>
 <?php
 					// je change la valeur du submit en fonction de la variable module
-					if ($module==1){echo "<td><input type='submit' value='Créer colis'></td>";}
-					if ($module==2){echo "<td><input type='submit' value='Supprimer colis'></td>";}
-					if ($module==3){echo "<td><input type='submit' value='Modifier colis'></td>";}
-					if ($module==4){echo "<td><input type='submit' value='Commentaire'></td>";}
+					if ($module==1){echo "<input type='submit' value='Créer colis'>";}
+					if ($module==2){echo "<input type='submit' value='Supprimer colis'>";}
+					if ($module==3){echo "<input type='submit' value='Modifier colis'>";}
+					if ($module==4){echo "<input type='submit' value='Commentaire'>";}
 ?>
+					</td>
 				</tr>
 			</table>
 			<input type='hidden' name='module' value='<?php echo $module;?>'/>
@@ -120,7 +131,7 @@ include_once("../menuJour.php");
 			<input type='hidden' name='sem2' value='<?php echo $sem2;?>'/>
 			<input type='hidden' name='sem3' value='<?php echo $sem3;?>'/>
 			<input type='hidden' name='sem4' value='<?php echo $sem4;?>'/>
-			<input type='hidden' name='solde' value='<?php echo ($solde - $montantColis);?>'/>
+			<input type='hidden' name='solde_colis' value='<?php echo ($solde_colis);?>'/>
 			<input type='hidden' name='referenceColis' value='<?php echo $referenceColis;?>'/>
 		</form>
 	</div>
@@ -132,12 +143,12 @@ include_once("../menuJour.php");
 		<table border=1 align='center' style='font-size:1.2em;'>
 			<tr>
 				<th>Heure</th>
-				<th>Nom</th>
 				<th>Prénom</th>
-				<th>Nombre/personne</th>
+				<th>Nom</th>
+				<th>Nb. pers</th>
 				<th colspan=4> Semaine de présence</th>
 				<th>Paiement du jour </th>
-				<th>Solde</th>
+				<th>Solde colis</th>
 				<th colspan=4>Actions</th>
 			</tr>
 
@@ -156,8 +167,9 @@ $sql=$sql."(select districolis.identifiant,
 					districolis.sem4,
 					districolis.montantcolis,
 					districolis.montantpaye,
-					districolis.solde,
-					districolis.commentaire
+					districolis.solde_colis,
+					districolis.commentaire,
+					false as nouveauColis
 				from beneficiaires inner join districolis on beneficiaires.ref = districolis.refbeneficiaire
 				where DATE(districolis.datedistri)='".date("Y-m-d", mktime(0, 0, 0, 1, $jourSelectionne))."'" ;
 //tri par heure de passage dans la requête sql
@@ -176,8 +188,9 @@ $sql=$sql."select 0,
 					sem4,
 					null,
 					null,
-					solde,
-					null
+					solde_colis,
+					null,
+					true as nouveauColis
 				from beneficiaires
 				where jourpassage=";
 //on n'affiche que les personnes qui doivent passer le jour de la semaine sélectionné
@@ -195,10 +208,10 @@ while ($chaine=$resultat->fetch())
 		//echo print_r($chaine);
 ?>
 			
-			<tr>
+			<tr <?php if ($chaine['identifiant']==$referenceColis && $chaine['ref']==$reference) {echo 'bgcolor="#78A9D4"';} else if ($chaine['nouveauColis']) {echo 'bgcolor="#ccffcc"';}?>>
 				<td><?php echo $chaine['heurepassage'];?></td>
-				<td><?php echo $chaine['nom'];?></td>
 				<td><?php echo $chaine['prenom'];?></td>
+				<td><?php echo $chaine['nom'];?></td>
 				<td><?php echo $chaine['nbracharge'];?></td>
 				<td><?php echo $chaine['sem1'];?></td>
 				<td><?php echo $chaine['sem2'];?></td>
@@ -216,13 +229,13 @@ while ($chaine=$resultat->fetch())
 						}
 					?>
 				</td>
-				<td><?php echo $chaine['solde'];?></td>
+				<td><?php echo $chaine['solde_colis'];?></td>
 				<td width=20>
 <?php
 				if( isset($chaine['montantpaye']) == false)
 				{
 ?>
-					<a href='districoli.php?module=1<?php echo ('&reference=' . $chaine['ref'] . '&nbracharge=' . $chaine['nbracharge'] . '&sem1=' . $chaine['sem1'] . '&sem2=' . $chaine['sem2'] . '&sem3=' . $chaine['sem3'] . '&sem4=' . $chaine['sem4'] . '&solde=' . $chaine['solde'] . '&jourSelectionne=' . $jourSelectionne . '&montantColis=' . $montantColis);?>'>
+					<a href='districoli.php?module=1<?php echo ('&reference=' . $chaine['ref'] . '&nbracharge=' . $chaine['nbracharge'] . '&sem1=' . $chaine['sem1'] . '&sem2=' . $chaine['sem2'] . '&sem3=' . $chaine['sem3'] . '&sem4=' . $chaine['sem4'] . '&solde_colis=' . $chaine['solde_colis'] . '&jourSelectionne=' . $jourSelectionne . '&montantColis=' . $montantColis);?>'>
 						<img src='../images/inserer.jpg' width=20 height=20 title='Créer colis'/>
 					</a>
 <?php
@@ -237,7 +250,7 @@ while ($chaine=$resultat->fetch())
 				if (isset($chaine['montantpaye']) ==true)
 				{
 ?>
-					<a href='districoli.php?module=2&referenceColis=<?php echo ($chaine['identifiant'] . '&jourSelectionne=' . $jourSelectionne);?>'>
+					<a href='districoli.php?module=2&referenceColis=<?php echo ($chaine['identifiant'] . '&jourSelectionne=' . $jourSelectionne . '&reference=' . $chaine['ref']);?>'>
 						<img src='../images/supprimer.jpg' width=20 height=20 title='Supprimer colis'/>
 					</a>
 <?php		} ?>
@@ -249,7 +262,7 @@ while ($chaine=$resultat->fetch())
 				if (isset($chaine['montantpaye']) ==true)
 				{
 ?>
-					<a href='districoli.php?module=3&referenceColis=<?php echo ($chaine['identifiant'] . '&jourSelectionne=' . $jourSelectionne);?>'>
+					<a href='districoli.php?module=3&referenceColis=<?php echo ($chaine['identifiant'] . '&jourSelectionne=' . $jourSelectionne . '&reference=' . $chaine['ref']);?>'>
 						<img src='../images/editer.jpg' width=20 height=20 title='Modifier colis'/>
 					</a>
 <?php		} ?>
@@ -261,7 +274,7 @@ while ($chaine=$resultat->fetch())
 				if (isset($chaine['montantpaye']) ==true)
 				{
 ?>
-					<a href='districoli.php?module=4&referenceColis=<?php echo $chaine['identifiant'];?>&commentaire=<?php echo ($chaine['commentaire'] . '&jourSelectionne=' . $jourSelectionne);?>'>
+					<a href='districoli.php?module=4&referenceColis=<?php echo $chaine['identifiant'];?>&jourSelectionne=<?php echo ($jourSelectionne . '&reference=' . $chaine['ref']);?>'>
 						<img src='../images/mail.png' width=20 height=20 title='Commentaire colis'/>
 					</a>
 <?php		} ?>

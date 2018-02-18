@@ -24,10 +24,10 @@ if (isset($_GET['prenomc'])) {$prenomc=$_GET['prenomc'];}
 			<tr>
 				
 				<td>
-					<label>nom</label>
-					<input type='text' name='nomc' value='<?php echo "$nomc"?>'/>
-					<label>prenom</label>
+					<label>Prénom : </label>
 					<input type='text' name='prenomc' value='<?php echo "$prenomc"?>'/>
+					<label>Nom : </label>
+					<input type='text' name='nomc' value='<?php echo "$nomc"?>'/>
 				</td>
 
 				<input type='hidden' name='module' value=0/>
@@ -54,8 +54,8 @@ if (isset($_GET['prenomc'])) {$prenomc=$_GET['prenomc'];}
 	</div>
 		<table border=1 align='center' style='font-size:1.2em;'>
 			<tr>
-				<th>Nom</th>
 				<th>Prénom</th>
+				<th>Nom</th>
 				<th>Téléphone</th>
 				<th>Adresse</th>
 				<th>Secteur</th>
@@ -94,9 +94,9 @@ while ($chaine=$resultat->fetch())
 	{
 ?>
 			
-			<tr>
-				<td><?php echo $chaine['nom'];?></td>
+			<tr <?php if ($chaine['ref']==$reference) {echo 'bgcolor="#78A9D4"';}?> >
 				<td><?php echo $chaine['prenom'];?></td>
+				<td><?php echo $chaine['nom'];?></td>
 				<td><?php echo $chaine['tel'];?></td>
 				<td><?php echo $chaine['adresse'];?></td>
 				<td><?php 
@@ -161,13 +161,13 @@ if ($module<>0){
 		<form name='fiche' action='enregistrer.php' enctype='multipart/form-data' method='POST'>
 			<table>
 				<tr>
-					<td>Nom</td>
-					<td>
-						<input type='text' name='nom' value='<?php echo $nom;?>' required />
-					</td>
-					<td>Prénom</td>
+					<td>Prénom : </td>
 					<td>
 						<input type='text' name='prenom' value='<?php echo $prenom;?>' />
+					</td>
+					<td>Nom : </td>
+					<td>
+						<input type='text' name='nom' value='<?php echo $nom;?>' required />
 					</td>
 				</tr>
 				<tr>

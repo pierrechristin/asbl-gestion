@@ -64,23 +64,46 @@ submit
 	vertical-align: middle;
 }
 
-ul.menuhorizontal li
+.menuhorizontal
 {
-	display: inline;
-	margin-left: auto;
-	margin-right: auto;
-	list_style_type: none;
-	background-color: white;
-	border: 1px solid black;
-	padding: 0.3em;
-	margin-top: 1px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-around;
+	align-items: center;
 }
 
+.menuhorizontal div
+{
+	background-color: rgb(175, 48, 77);
+	border: 1px solid black;
+	border-radius: 10px;
+	margin: 10px 0px;
+	padding: 0.3em;
+	font-family: sans-serif;
+	color: white;
+	font-weight: bold;
+}
+
+.menuhorizontal div a
+{
+	color: white;
+}
+
+.selectionne
+{
+	color:rgb(252, 180, 69) !important;
+}
+
+.bonjour
+{
+	color:rgb(120, 169, 212);
+}
+	
 .corpsentier
 {
 	width: 98%;
 	height: 94%;
-	background-color: grey;
+	background-color: #d9d9d9;
 	margin-top: 2px;
 	margin-left: 1%;
 	border: 1px solid black;
@@ -96,7 +119,7 @@ ul.menuhorizontal li
 {
 	width: 98%;
 	float: left;
-	background-color: grey;
+	background-color: #d9d9d9;
 	opacity: 0.9;
 	border: 1px solid black;
 	margin-left: 1%;
@@ -109,7 +132,7 @@ ul.menuhorizontal li
 {
 	width: 60%;
 	float: left;
-	background-color: grey;
+	background-color: #d9d9d9;
 	border: 1px solid black;
 	margin-top: 1px;
 	margin-left: 1px;
@@ -121,7 +144,7 @@ ul.menuhorizontal li
 {
 	width: 48%;
 	float: left;
-	background-color: grey;
+	background-color: #d9d9d9;
 	border: 1px solid black;
 	margin-top: 3px;
 	margin-left: 1%;
@@ -133,7 +156,7 @@ ul.menuhorizontal li
 {
 	width: 48%;
 	float: right;
-	background-color: grey;
+	background-color: #d9d9d9;
 	margin-top: 3px;
 	margin-right: 1%;
 	padding: 1px;
@@ -145,7 +168,7 @@ ul.menuhorizontal li
 {
 	width: 40%;
 	float: right;
-	background-color: grey;
+	background-color: #d9d9d9;
 	margin-top: 3px;
 	margin-right: 1%;
 	padding: 5px;
@@ -271,4 +294,12 @@ ul.menuhorizontal li
 	background: -o-linear-gradient(top, #3e779d, #65a9d7);
 	background-image: -ms-linear-gradient(top, #3e779d 0%, #65a9d7 100%);
 	color: #fff;
+}
+
+.boutonSignalementPresence {
+    background: url("../images/signaler.png");
+    border: 0;
+    display: block;
+    height: 32px;
+    width: 32px;
 }

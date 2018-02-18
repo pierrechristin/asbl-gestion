@@ -1,5 +1,5 @@
 <?php
-include('../validation.php');
+include($_SERVER['DOCUMENT_ROOT'].'/asbl-gestion/validation.php');
 
 $_SESSION['dsn1']="mysql:host=localhost;dbname=asbl";
 $_SESSION['loginbdd']="cmsuser";

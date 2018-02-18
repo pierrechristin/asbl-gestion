@@ -21,6 +21,10 @@ function autorisation( $mail, $mdp)
 	
 	if (isset($result) && password_verify($mdp, $result['mdp']))
 	{
+		$_SESSION['idUtilisateur']=$result['ref'];
+		$_SESSION['secteur']=$result['secteur'];
+		$_SESSION['nom']=$result['nom'];
+		$_SESSION['prenom']=$result['prenom'];
 		return TRUE;
 	}
 	else 
@@ -35,8 +39,16 @@ $_SESSION['loginbdd']="cmsuser";
 $_SESSION['pwdbdd']="ensemble1";
 
 
-
-if ( isset( $_POST['mail'] ) ) 
+// Mode visiteur
+if ($_POST['action'] == 'Visiteur') {
+	$_SESSION['mail'] = 'Visiteur';
+	$_SESSION['idUtilisateur']=-1;
+	$_SESSION['secteur']=-1;
+	$_SESSION['nom']='Visiteur';
+	$_SESSION['prenom']='Visiteur';
+}
+// Mode normal
+else if ( isset( $_POST['mail'] ) ) 
 {
    	$mail=$_POST['mail'];
 	$mdp=$_POST['mdp'];
@@ -49,7 +61,6 @@ if ( isset( $_POST['mail'] ) )
 		session_regenerate_id();
 		//association du login avec la session
 		$_SESSION['mail'] = $mail;
-		//$_SESSION['groupe']=$groupe;
 	}
 	else 
 	{

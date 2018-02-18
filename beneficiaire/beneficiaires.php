@@ -24,10 +24,10 @@ if (isset($_GET['prenomc'])) {$prenomc=$_GET['prenomc'];}
 			<tr>
 				
 				<td>
-					<label>nom</label>
-					<input type='text' name='nomc' value='<?php echo "$nomc"?>'/>
-					<label>prenom</label>
+					<label>Prénom : </label>
 					<input type='text' name='prenomc' value='<?php echo "$prenomc"?>'/>
+					<label>Nom : </label>
+					<input type='text' name='nomc' value='<?php echo "$nomc"?>'/>
 				</td>
 
 				<input type='hidden' name='module' value=0/>
@@ -54,11 +54,11 @@ if (isset($_GET['prenomc'])) {$prenomc=$_GET['prenomc'];}
 	</div>
 		<table border=1 align='center' style='font-size:1.2em;'>
 			<tr>
-				<th>Nom</th>
 				<th>Prénom</th>
+				<th>Nom</th>
 				<th>Téléphone</th>
 				<th>Adresse</th>
-				<th>Personne a charge</th>
+				<th>Nb. pers</th>
 				<th colspan=2>Actions</th>
 			</tr>
 
@@ -94,9 +94,9 @@ while ($chaine=$resultat->fetch())
 	{
 ?>
 			
-			<tr>
-				<td><?php echo $chaine['nom'];?></td>
+			<tr <?php if ($chaine['ref']==$reference) {echo 'bgcolor="#78A9D4"';}?> >
 				<td><?php echo $chaine['prenom'];?></td>
+				<td><?php echo $chaine['nom'];?></td>
 				<td><?php echo $chaine['tel'];?></td>
 				<td><?php echo $chaine['adresse'];?></td>
 				<td><?php echo $chaine['nbracharge'];?></td>
@@ -119,7 +119,7 @@ while ($chaine=$resultat->fetch())
 
 
 <?php
-$nom='';$prenom='';$tel='';$adresse='';$nbracharge='';$solde='';$sem1='';$sem2='';$sem3='';$sem4='';$jourPassage='';$heurePassage='';$minutePassage='';
+$nom='';$prenom='';$tel='';$adresse='';$nbracharge='';$solde_colis='';$solde_magasin='';$sem1='';$sem2='';$sem3='';$sem4='';$jourPassage='';$heurePassage='';$minutePassage='';
 
 	//si modifier ou supprimer fiche récupérer les valeurs
 	
@@ -134,7 +134,8 @@ $nom='';$prenom='';$tel='';$adresse='';$nbracharge='';$solde='';$sem1='';$sem2='
 		$tel=$chaine2['tel'];
 		$adresse=$chaine2['adresse'];
 		$nbracharge=$chaine2['nbracharge'];
-		$solde=$chaine2['solde'];
+		$solde_colis=$chaine2['solde_colis'];
+		$solde_magasin=$chaine2['solde_magasin'];
 		$sem1=$chaine2['sem1'];
 		$sem2=$chaine2['sem2'];
 		$sem3=$chaine2['sem3'];
@@ -152,93 +153,105 @@ if ($module<>0){
 		<form name='fiche' action='enregistrer.php' enctype='multipart/form-data' method='POST'>
 			<table>
 				<tr>
-					<td>Nom</td>
+					<td>Prénom : </td>
 					<td>
-						<input type='text' name='nom' value='<?php echo $nom;?>' required />
+						<input type='text' name='prenom' value='<?php echo $prenom;?>' size=10/>
 					</td>
-					<td>Prénom</td>
+					<td>Nom : </td>
 					<td>
-						<input type='text' name='prenom' value='<?php echo $prenom;?>' />
-					</td>
-					<td rowspan=6 colspan=3></td>
-					<tr>
-						<td>Adresse</td>
-						<td colspan=4>
-							<input type='text' size=60 name='adresse' value='<?php echo $adresse;?>'/>
-						</td>
-					</tr>
-					<tr>
-						<td>Personne a charge</td>
-						<td>
-							<input type='text'  name='nbracharge' value='<?php echo $nbracharge;?>'/>
-						</td>
-						<td>Téléphone</td>
-						<td>
-							<input type='text'  name='tel' value='<?php echo $tel;?>'/>
-						</td>
-					</tr>
-					<td>solde</td>
-					<td>
-						<input type='text'  name='solde' value='<?php echo $solde;?>'/>
-					</td>				
-					<td>Semaine présence</td> 
-					<td> 
-						<input type='checkbox' name='sem1' <?php if($sem1==1){ echo "checked";}   ?>/>
-						<input type='checkbox' name='sem2' <?php if($sem2==1){ echo "checked";}  ?>/>
-						<input type='checkbox' name='sem3' <?php if($sem3==1){ echo "checked";} ?>/>
-						<input type='checkbox' name='sem4' <?php if($sem4==1){ echo "checked";}  ?>/>
+						<input type='text' name='nom' value='<?php echo $nom;?>' required size=10 />
 					</td>
 				</tr>
 				<tr>
-					<td>Jour passage</td>
+					<td>Adresse : </td>
+					<td colspan=3>
+						<input type='text' size=30 name='adresse' value='<?php echo $adresse;?>' />
+					</td>
+				</tr>
+				<tr>
+					<td>Nb. personnes<br/>à charge : </td>
+					<td>
+						<input type='text'  name='nbracharge' value='<?php echo $nbracharge;?>' size=10 />
+					</td>
+					<td>Téléphone : </td>
+					<td>
+						<input type='text'  name='tel' value='<?php echo $tel;?>' size=10 />
+					</td>
+				</tr>
+				<tr>
+					<td>Solde colis : </td>
+					<td>
+						<input type='text'  name='solde_colis' value='<?php echo $solde_colis;?>' size=10 />
+					</td>
+					<td>Solde magasin : </td>
+					<td>
+						<input type='text'  name='solde_magasin' value='<?php echo $solde_magasin;?>' size=10 />
+					</td>
+				</tr>
+				<tr>			
+					<td>Semaine présence : </td> 
+					<td colspan=3> 
+						<input type='checkbox' name='sem1' <?php if($sem1==1){ echo "checked";} ?> />
+						<input type='checkbox' name='sem2' <?php if($sem2==1){ echo "checked";} ?> />
+						<input type='checkbox' name='sem3' <?php if($sem3==1){ echo "checked";} ?> />
+						<input type='checkbox' name='sem4' <?php if($sem4==1){ echo "checked";} ?> />
+					</td>
+				</tr>
+				<tr>
+					<td>Jour passage : </td>
 					<td>
 						<SELECT name="jourPassage" size="1">
-							<OPTION value="2" <?php if($jourPassage==2){ echo "selected";} ?>> mardi
-							<OPTION value="3" <?php if($jourPassage==3){ echo "selected";} ?>> mercredi
-							<OPTION value="4" <?php if($jourPassage==4){ echo "selected";} ?>> jeudi
+							<!-- <OPTION value="2" <?php if($jourPassage==2){ echo "selected";} ?>> lundi -->
+							<!-- <OPTION value="2" <?php if($jourPassage==2){ echo "selected";} ?>> mardi -->
+							<!-- <OPTION value="3" <?php if($jourPassage==3){ echo "selected";} ?>> mercredi -->
+							<!-- <OPTION value="4" <?php if($jourPassage==4){ echo "selected";} ?>> jeudi -->
 							<OPTION value="5" <?php if($jourPassage==5){ echo "selected";} ?>> vendredi
 						</SELECT>
 					</td>
 					
-					<td>Heure passage</td>
+					<td>Heure passage : </td>
 					<td>
-						<SELECT name="heurePassage" size="1">
-							<OPTION  <?php if($heurePassage==9){ echo "selected";} ?>> 9
-							<OPTION  <?php if($heurePassage==10){ echo "selected";} ?>> 10
-							<OPTION  <?php if($heurePassage==11){ echo "selected";} ?>> 11
-							<OPTION  <?php if($heurePassage==12){ echo "selected";} ?>> 12
-							<OPTION  <?php if($heurePassage==13){ echo "selected";} ?>> 13
-							<OPTION  <?php if($heurePassage==14){ echo "selected";} ?>> 14
-							<OPTION  <?php if($heurePassage==15){ echo "selected";} ?>> 15
-							<OPTION  <?php if($heurePassage==16){ echo "selected";} ?>> 16
-							<OPTION  <?php if($heurePassage==17){ echo "selected";} ?>> 17
-						</SELECT>
-						H
-						<SELECT name="minutePassage" size="1">
-							<OPTION  <?php if($minutePassage==0){ echo "selected";} ?>> 00
-							<OPTION  <?php if($minutePassage==15){ echo "selected";} ?>> 15
-							<OPTION  <?php if($minutePassage==30){ echo "selected";} ?>> 30
-							<OPTION  <?php if($minutePassage==45){ echo "selected";} ?>> 45
-						</SELECT>
-						M
+						<div style="float: left;">
+							<SELECT name="heurePassage" size="1">
+								<OPTION  <?php if($heurePassage==9){ echo "selected";} ?>> 9
+								<OPTION  <?php if($heurePassage==10){ echo "selected";} ?>> 10
+								<OPTION  <?php if($heurePassage==11){ echo "selected";} ?>> 11
+								<OPTION  <?php if($heurePassage==12){ echo "selected";} ?>> 12
+								<OPTION  <?php if($heurePassage==13){ echo "selected";} ?>> 13
+								<OPTION  <?php if($heurePassage==14){ echo "selected";} ?>> 14
+								<OPTION  <?php if($heurePassage==15){ echo "selected";} ?>> 15
+								<OPTION  <?php if($heurePassage==16){ echo "selected";} ?>> 16
+								<OPTION  <?php if($heurePassage==17){ echo "selected";} ?>> 17
+							</SELECT>
+							H
+						</div>
+						<div style="float: left;">
+							<SELECT name="minutePassage" size="1">
+								<OPTION  <?php if($minutePassage==0){ echo "selected";} ?>> 00
+								<OPTION  <?php if($minutePassage==15){ echo "selected";} ?>> 15
+								<OPTION  <?php if($minutePassage==30){ echo "selected";} ?>> 30
+								<OPTION  <?php if($minutePassage==45){ echo "selected";} ?>> 45
+							</SELECT>
+							M
+						</div>
 					</td>
 				</tr>
 				<tr>
-					<td>
+					<td colspan=4>
 						<input type='hidden' name='module' value='<?php echo $module;?>'/>
-					</td>
-				</tr>
-				<tr>
-					<td>
 						<input type='hidden' name='reference' value='<?php echo $reference;?>'/>
 					</td>
 				</tr>
+				<tr>
+					<td colspan=4 align=center>
 <?php
 // je change la valeur du submit en fonction de la variable module
-if ($module==1){echo "<tr><td colspan=3><input type='submit' value='Enregistrer les modification'></td></tr>";}	
-if ($module==2){echo "<tr><td colspan=3><input type='submit' value='Ajouter la fiche'></td></tr>";}	
-if ($module==3){echo "<tr><td colspan=3><input type='submit' value='Confirmer la suppression de la fiche'></td></tr>";}	
+if ($module==1){echo "<input type='submit' value='Enregistrer les modification'>";}	
+if ($module==2){echo "<input type='submit' value='Ajouter la fiche'>";}	
+if ($module==3){echo "<input type='submit' value='Confirmer la suppression de la fiche'>";}	
 ?>
+					</td>
+				</tr>
 
 			</table>
 		</form>

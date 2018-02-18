@@ -9,13 +9,12 @@ if (isset($_GET['jourSelectionne'])) {$jourSelectionne=$_GET['jourSelectionne'];
 $w = date("W", mktime(0,0,0,1,$jourSelectionne));
 ?>
 
-	<div class='bloclarge' align='center'>
-		<ul class='menuhorizontal'>
-			<li> 
-				<a href='<?php echo $nomPage ?>.php?jourSelectionne=<?php echo $jourSelectionne-7 ?>'>
-					<== Semaine précédente
-				</a>
-			</li>
+	<div class='bloclarge menuhorizontal' align='center'>
+		<div> 
+			<a href='<?php echo $nomPage ?>.php?jourSelectionne=<?php echo $jourSelectionne-7 ?>'>
+				<== Semaine précédente
+			</a>
+		</div>
 			
 <?php
 //recherche de la semaine actuel
@@ -26,11 +25,11 @@ for($i = 1; $i <= 365; $i++) {
 		for($d = 0; $d < 7; $d++) {
 			if ($d==5) { // Pour dire que c'est uniquement le Vendredi
  ?>
-			<li>
-				<a href='<?php echo $nomPage ?>.php?jourSelectionne=<?php echo ($i + $d-1);?>'<?php if ($i+$d-1==$jourSelectionne){echo('style="font-weight:bold;"');}?>>
-					<?php echo (date("d/m/Y",mktime (0,0,0,1,$i + $d-1)))?>
-				</a>
-			</li>
+		<div>
+			<a href='<?php echo $nomPage ?>.php?jourSelectionne=<?php echo ($i + $d-1);?>'<?php if ($i+$d-1==$jourSelectionne){echo("class='selectionne'");}?>>
+				<?php echo (date("d/m/Y",mktime (0,0,0,1,$i + $d-1)))?>
+			</a>
+		</div>
  <?php
 	  }
     }
@@ -38,10 +37,9 @@ for($i = 1; $i <= 365; $i++) {
   }
 }
 ?>
-			<li> 
-				<a href='<?php echo $nomPage ?>.php?jourSelectionne=<?php echo $jourSelectionne+7 ?>'>
-					Semaine suivante ==>
-				</a>
-			</li>
-		</ul>
+		<div> 
+			<a href='<?php echo $nomPage ?>.php?jourSelectionne=<?php echo $jourSelectionne+7 ?>'>
+				Semaine suivante ==>
+			</a>
+		</div>
 	</div>
