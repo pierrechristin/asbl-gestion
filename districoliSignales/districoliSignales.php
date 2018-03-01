@@ -181,6 +181,7 @@ $sql=$sql."(select districolis.identifiant,
 					districolis.sem2,
 					districolis.sem3,
 					districolis.sem4,
+					beneficiaires.aide_familiale,
 					districolis.montantcolis,
 					districolis.montantpaye,
 					districolis.solde_colis,
@@ -202,6 +203,7 @@ $sql=$sql."select 0,
 					sem2,
 					sem3,
 					sem4,
+					aide_familiale,
 					null,
 					null,
 					solde_colis,
@@ -219,12 +221,23 @@ $resultat=$base->query($sql);
 
 // affichage ligne par ligne
 while ($chaine=$resultat->fetch())
-	
 	{
 		//echo print_r($chaine);
-?>
 		
-		<tr <?php if ($chaine['identifiant']==$referenceColis && $chaine['ref']==$reference) {echo 'bgcolor="#78A9D4"';} else if ($chaine['nouveauColis']) {echo 'bgcolor="#ccffcc"';}?>>
+		// On détermine, ligne par ligne, quelle sera la couleur de fond.
+		if ($chaine['identifiant']==$referenceColis && $chaine['ref']==$reference)
+		{
+			// Colis affiché dans le formulaire
+			$bgcolor = '#78A9D4'; // bleu
+		}
+		else if ($chaine['nouveauColis'])
+		{
+			// Colis à créer
+				// Pour un bénéficiaire qui dispose pas d'aide familiale : pas priorisation particulière.
+				$bgcolor = '#ccffcc'; // vert
+		}
+?>
+		<tr <?php if (isset($bgcolor)) {echo 'bgcolor="'.$bgcolor.'"';}?>>
 			<td><?php echo $chaine['heurepassage'];?></td>
 			<td><?php echo $chaine['prenom'];?></td>
 			<td><?php echo $chaine['nom'];?></td>
