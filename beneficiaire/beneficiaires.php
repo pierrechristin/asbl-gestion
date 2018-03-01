@@ -119,7 +119,7 @@ while ($chaine=$resultat->fetch())
 
 
 <?php
-$nom='';$prenom='';$tel='';$adresse='';$nbracharge='';$solde_colis='';$solde_magasin='';$sem1='';$sem2='';$sem3='';$sem4='';$jourPassage='';$heurePassage='';$minutePassage='';
+$nom='';$prenom='';$tel='';$adresse='';$nbracharge='';$solde_colis='';$solde_magasin='';$sem1='';$sem2='';$sem3='';$sem4='';$aide_familiale='';$jourPassage='';$heurePassage='';$minutePassage='';
 
 	//si modifier ou supprimer fiche récupérer les valeurs
 	
@@ -140,6 +140,7 @@ $nom='';$prenom='';$tel='';$adresse='';$nbracharge='';$solde_colis='';$solde_mag
 		$sem2=$chaine2['sem2'];
 		$sem3=$chaine2['sem3'];
 		$sem4=$chaine2['sem4'];
+		$aide_familiale=$chaine2['aide_familiale'];
 		$jourPassage=$chaine2['jourpassage'];
 		$heurePassage=date('H',strtotime($chaine2['heurepassage']));
 		$minutePassage=date('i',strtotime($chaine2['heurepassage']));
@@ -190,11 +191,15 @@ if ($module<>0){
 				</tr>
 				<tr>			
 					<td>Semaine présence : </td> 
-					<td colspan=3> 
+					<td> 
 						<input type='checkbox' name='sem1' <?php if($sem1==1){ echo "checked";} ?> />
 						<input type='checkbox' name='sem2' <?php if($sem2==1){ echo "checked";} ?> />
 						<input type='checkbox' name='sem3' <?php if($sem3==1){ echo "checked";} ?> />
 						<input type='checkbox' name='sem4' <?php if($sem4==1){ echo "checked";} ?> />
+					</td>
+					<td>Aide familiale : </td> 
+					<td> 
+						<input type='checkbox' name='aide_familiale' <?php if($aide_familiale==1){ echo "checked";} ?> />
 					</td>
 				</tr>
 				<tr>

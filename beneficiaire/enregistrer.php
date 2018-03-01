@@ -21,6 +21,7 @@ $sql='update beneficiaires'.' '
 			.'sem2="'.isset($_POST['sem2']).'",'
 			.'sem3="'.isset($_POST['sem3']).'",'
 			.'sem4="'.isset($_POST['sem4']).'",'
+			.'aide_familiale="'.isset($_POST['aide_familiale']).'",'
 			.'jourpassage="'.$_POST['jourPassage'].'",'
 			.'heurepassage="'.date('H:i:s',mktime($_POST['heurePassage'],$_POST['minutePassage'],0)).'",'
 			.'id_utilisateur_modification='.$_SESSION['idUtilisateur'].' '
@@ -45,6 +46,7 @@ $sql='insert into beneficiaires ('
 			.'sem2,'
 			.'sem3,'
 			.'sem4,'
+			.'aide_familiale,'
 			.'jourpassage,'
 			.'heurepassage,'
 			.'id_utilisateur_creation'
@@ -60,9 +62,10 @@ $sql='insert into beneficiaires ('
 		.'"'.isset($_POST['sem2']).'",'
 		.'"'.isset($_POST['sem3']).'",'
 		.'"'.isset($_POST['sem4']).'",'
+		.'"'.isset($_POST['aide_familiale']).'",'
 		.'"'.$_POST['jourPassage'].'",'
 		.'"'.date('H:i:s',mktime($_POST['heurePassage'],$_POST['minutePassage'],0)).'",'
-		.'"'.$_SESSION['idUtilisateur'].')';
+		.$_SESSION['idUtilisateur'].')';
 $base->exec($sql);
 }
 

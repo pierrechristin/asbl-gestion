@@ -644,3 +644,114 @@ DROP TRIGGER IF EXISTS `after_delete_districolis`;CREATE DEFINER=`root`@`localho
         NOW(),
         'D');
 END
+
+
+
+-- 01/03/2018 - Ajout d'une colonne aide_familiale pour les bénéficiares.
+ALTER TABLE `beneficiaires` ADD `aide_familiale` BOOLEAN NOT NULL COMMENT 'Indique si le bénéficiaire dispose d\'une aide familiale.' AFTER `sem4`;
+
+ALTER TABLE `beneficiaires_historique` ADD `aide_familiale` BOOLEAN NOT NULL COMMENT 'Indique si le bénéficiaire dispose d\'une aide familiale.' AFTER `sem4`;
+
+DROP TRIGGER IF EXISTS `after_delete_beneficiaires`;CREATE DEFINER=`root`@`localhost` TRIGGER `after_delete_beneficiaires` AFTER DELETE ON `beneficiaires` FOR EACH ROW BEGIN
+    INSERT INTO beneficiaires_historique (
+  `nom`,
+  `prenom`,
+  `tel`,
+  `adresse`,
+  `nbracharge`,
+  `heurepassage`,
+  `ref`,
+  `sem1`,
+  `sem2`,
+  `sem3`,
+  `sem4`,
+  `aide_familiale`,
+  `solde_colis`,
+  `solde_magasin`,
+  `commentaire`,
+  `jourpassage`,
+  date_creation, -- date de création du beneficiaire
+  id_utilisateur_creation, -- utilisateur ayant créé le beneficiaire
+  date_modification, -- date de dernière modification du beneficiaire
+  id_utilisateur_modification,
+  
+  date_histo,
+  evenement_histo)
+    VALUES (
+        OLD.nom,
+        OLD.prenom,
+        OLD.tel,
+        OLD.adresse,
+        OLD.nbracharge,
+        OLD.heurepassage,
+        OLD.ref,
+		OLD.sem1,
+		OLD.sem2,
+		OLD.sem3,
+		OLD.sem4,
+        OLD.aide_familiale,
+		OLD.solde_colis,
+		OLD.solde_magasin,
+		OLD.commentaire,
+		OLD.jourpassage,
+        OLD.date_creation,
+        OLD.id_utilisateur_creation,
+        OLD.date_modification,
+        OLD.id_utilisateur_modification,
+
+        NOW(),
+        'D');
+END
+
+DROP TRIGGER IF EXISTS `after_update_beneficiaires`;CREATE DEFINER=`root`@`localhost` TRIGGER `after_update_beneficiaires` AFTER UPDATE ON `beneficiaires` FOR EACH ROW BEGIN
+    INSERT INTO beneficiaires_historique (
+  `nom`,
+  `prenom`,
+  `tel`,
+  `adresse`,
+  `nbracharge`,
+  `heurepassage`,
+  `ref`,
+  `sem1`,
+  `sem2`,
+  `sem3`,
+  `sem4`,
+  `aide_familiale`,
+  `solde_colis`,
+  `solde_magasin`,
+  `commentaire`,
+  `jourpassage`,
+  date_creation, -- date de création du beneficiaire
+  id_utilisateur_creation, -- utilisateur ayant créé le beneficiaire
+  date_modification, -- date de dernière modification du beneficiaire
+  id_utilisateur_modification,
+  
+  date_histo,
+  id_utilisateur_histo,
+  evenement_histo)
+    VALUES (
+        OLD.nom,
+        OLD.prenom,
+        OLD.tel,
+        OLD.adresse,
+        OLD.nbracharge,
+        OLD.heurepassage,
+        OLD.ref,
+		OLD.sem1,
+		OLD.sem2,
+		OLD.sem3,
+		OLD.sem4,
+        OLD.aide_familiale,
+		OLD.solde_colis,
+		OLD.solde_magasin,
+		OLD.commentaire,
+		OLD.jourpassage,
+        OLD.date_creation,
+        OLD.id_utilisateur_creation,
+        OLD.date_modification,
+        OLD.id_utilisateur_modification,
+
+        NOW(),
+        NEW.id_utilisateur_modification,
+        'U');
+END
