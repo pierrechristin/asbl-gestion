@@ -233,8 +233,16 @@ while ($chaine=$resultat->fetch())
 		else if ($chaine['nouveauColis'])
 		{
 			// Colis à créer
+			if ($chaine['aide_familiale'])
+			{
+				// Pour un bénéficiaire qui dispose d'une aide familiale : colis à distribuer en priorité.
+				$bgcolor = '#ffe6cc'; // orange
+			}
+			else
+			{
 				// Pour un bénéficiaire qui dispose pas d'aide familiale : pas priorisation particulière.
 				$bgcolor = '#ccffcc'; // vert
+			}
 		}
 ?>
 		<tr <?php if (isset($bgcolor)) {echo 'bgcolor="'.$bgcolor.'"';}?>>
