@@ -169,11 +169,39 @@ if($module<>0)
 		</tr>
 
 <?php
-$sql="select * from"; 
-$sql=$sql."(select districolis.identifiant,
+
+$sqlA= "select 0 as identifiant,
+					ref,
+					DATE(datesignalement) as jourpassage,
+					TIME(datesignalement) as heurepassage,
+					nom,
+					prenom,
+					nbracharge,
+					sem1,
+					sem2,
+					sem3,
+					sem4,
+					aide_familiale,
+					null as montantcolis,
+					null as montantpaye,
+					solde_colis,
+					null as commentaire,
+					true as nouveauColis
+				from beneficiaires
+				join signalement_presence on signalement_presence.refbeneficiaire = beneficiaires.ref
+				where DATE(signalement_presence.datesignalement)='";
+$sqlA=$sqlA.date("Y-m-d", mktime(0, 0, 0, 1, $jourSelectionne))."'";
+$sqlA=$sqlA." and ref not in (select refbeneficiaire from districolis where DATE(datedistri)='";
+$sqlA=$sqlA.date("Y-m-d", mktime(0, 0, 0, 1, $jourSelectionne))."'";
+$sqlA=$sqlA.")";
+$sqlA=$sqlA." group by nom, prenom";
+$sqlA=$sqlA." order by aide_familiale desc, heurepassage asc ";
+$resultatA=$base->query($sqlA);
+
+$sqlB = "select districolis.identifiant,
 					beneficiaires.ref,
-					DATE(districolis.datedistri) as jourpassage,
-					TIME(districolis.datedistri) as heurepassage,
+					DATE(datesignalement) as jourpassage,
+					TIME(datesignalement) as heurepassage,
 					beneficiaires.nom,
 					beneficiaires.prenom,
 					districolis.nbracharge,
@@ -188,39 +216,19 @@ $sql=$sql."(select districolis.identifiant,
 					districolis.commentaire,
 					false as nouveauColis
 				from beneficiaires inner join districolis on beneficiaires.ref = districolis.refbeneficiaire
-				where DATE(districolis.datedistri)='".date("Y-m-d", mktime(0, 0, 0, 1, $jourSelectionne))."'" ;
-//tri par heure de passage dans la requête sql
-//$sql=$sql." order by beneficiaires.heurepassage asc ";
-$sql=$sql." union ";
-$sql=$sql."select 0,
-					ref,
-					DATE(datesignalement) as jourpassage,
-					TIME(datesignalement) as heurepassage,
-					nom,
-					prenom,
-					nbracharge,
-					sem1,
-					sem2,
-					sem3,
-					sem4,
-					aide_familiale,
-					null,
-					null,
-					solde_colis,
-					null,
-					true as nouveauColis
-				from beneficiaires
 				join signalement_presence on signalement_presence.refbeneficiaire = beneficiaires.ref
-				where DATE(signalement_presence.datesignalement)='";
-//on n'affiche que les personnes qui doivent passer le jour de la semaine sélectionné
-$sql=$sql.date("Y-m-d", mktime(0, 0, 0, 1, $jourSelectionne))."'";
-$sql=$sql.")as colisjour group by nom, prenom";
-//$sql=$sql." order by TIME(districolis.datedistri) asc ";
-// echo $sql;
-$resultat=$base->query($sql);
+				where DATE(districolis.datedistri)='".date("Y-m-d", mktime(0, 0, 0, 1, $jourSelectionne))."'
+				and DATE(signalement_presence.datesignalement)='";
+$sqlB=$sqlB.date("Y-m-d", mktime(0, 0, 0, 1, $jourSelectionne))."'";
+$sqlB=$sqlB." group by nom, prenom";
+$sqlB=$sqlB." order by heurepassage asc ";
+$resultatB=$base->query($sqlB);
+
+
+
 
 // affichage ligne par ligne
-while ($chaine=$resultat->fetch())
+while ($chaine=$resultatA->fetch())
 	{
 		//echo print_r($chaine);
 		
@@ -230,13 +238,13 @@ while ($chaine=$resultat->fetch())
 			// Colis affiché dans le formulaire
 			$bgcolor = '#78A9D4'; // bleu
 		}
-		else if ($chaine['nouveauColis'])
+		else if ($chaine['nouveauColis'] == true)
 		{
 			// Colis à créer
-			if ($chaine['aide_familiale'])
+			if ($chaine['aide_familiale'] == true)
 			{
 				// Pour un bénéficiaire qui dispose d'une aide familiale : colis à distribuer en priorité.
-				$bgcolor = '#ffe6cc'; // orange
+				$bgcolor = '#ffcc99'; // orange
 			}
 			else
 			{
@@ -318,7 +326,113 @@ while ($chaine=$resultat->fetch())
 			</td>
 		</tr>
 <?php
+		unset($bgcolor);
 	}
+	
+	// affichage ligne par ligne
+while ($chaine=$resultatB->fetch())
+	{
+		//echo print_r($chaine);
+		
+		// On détermine, ligne par ligne, quelle sera la couleur de fond.
+		if ($chaine['identifiant']==$referenceColis && $chaine['ref']==$reference)
+		{
+			// Colis affiché dans le formulaire
+			$bgcolor = '#78A9D4'; // bleu
+		}
+		else if ($chaine['nouveauColis'] == true)
+		{
+			// Colis à créer
+			if ($chaine['aide_familiale'] == true)
+			{
+				// Pour un bénéficiaire qui dispose d'une aide familiale : colis à distribuer en priorité.
+				$bgcolor = '#ffcc99'; // orange
+			}
+			else
+			{
+				// Pour un bénéficiaire qui dispose pas d'aide familiale : pas priorisation particulière.
+				$bgcolor = '#ccffcc'; // vert
+			}
+		}
+?>
+		<tr <?php if (isset($bgcolor)) {echo 'bgcolor="'.$bgcolor.'"';}?>>
+			<td><?php echo $chaine['heurepassage'];?></td>
+			<td><?php echo $chaine['prenom'];?></td>
+			<td><?php echo $chaine['nom'];?></td>
+			<td><?php echo $chaine['nbracharge'];?></td>
+			<td><?php echo $chaine['sem1'];?></td>
+			<td><?php echo $chaine['sem2'];?></td>
+			<td><?php echo $chaine['sem3'];?></td>
+			<td><?php echo $chaine['sem4'];?></td>
+			<td>
+					<?php
+						if (isset($chaine['montantpaye']))
+						{
+							echo $chaine['montantpaye'];
+						}
+						else
+						{
+							echo "Pas de colis distribué";
+						}
+					?>
+			</td>
+			<td><?php echo $chaine['solde_colis'];?></td>
+			<td width=20>
+<?php
+				if( isset($chaine['montantpaye']) == false)
+				{
+?>
+				<a href='districoliSignales.php?module=1<?php echo ('&reference=' . $chaine['ref'] . '&nbracharge=' . $chaine['nbracharge'] . '&sem1=' . $chaine['sem1'] . '&sem2=' . $chaine['sem2'] . '&sem3=' . $chaine['sem3'] . '&sem4=' . $chaine['sem4'] . '&solde_colis=' . $chaine['solde_colis'] . '&jourSelectionne=' . $jourSelectionne . '&montantColis=' . $montantColis);?>'>
+					<img src='../images/inserer.jpg' width=20 height=20 title='Créer colis'/>
+				</a>
+<?php
+				} 
+?>
+			</td>
+
+				
+			<td width=20>
+				
+<?php				
+				if (isset($chaine['montantpaye']) ==true)
+				{
+?>
+				<a href='districoliSignales.php?module=2&referenceColis=<?php echo ($chaine['identifiant'] . '&jourSelectionne=' . $jourSelectionne . '&reference=' . $chaine['ref']);?>'>
+					<img src='../images/supprimer.jpg' width=20 height=20 title='Supprimer colis'/>
+				</a>
+<?php		} ?>
+			</td>
+				
+				
+			<td width=20>
+<?php				
+				if (isset($chaine['montantpaye']) ==true)
+				{
+?>
+				<a href='districoliSignales.php?module=3&referenceColis=<?php echo ($chaine['identifiant'] . '&jourSelectionne=' . $jourSelectionne . '&reference=' . $chaine['ref']);?>'>
+					<img src='../images/editer.jpg' width=20 height=20 title='Modifier colis'/>
+				</a>
+<?php		} ?>
+			</td>
+			
+			
+			<td width=20>
+<?php				
+				if (isset($chaine['montantpaye']) ==true)
+				{
+?>
+				<a href='districoliSignales.php?module=4&referenceColis=<?php echo $chaine['identifiant'];?>&jourSelectionne=<?php echo ($jourSelectionne . '&reference=' . $chaine['ref']);?>'>
+					<img src='../images/mail.png' width=20 height=20 title='Commentaire colis'/>
+				</a>
+<?php		} ?>
+			</td>
+		</tr>
+<?php
+		unset($bgcolor);
+	}
+	
+	
+	
 ?>
 	</table>
 </div>
