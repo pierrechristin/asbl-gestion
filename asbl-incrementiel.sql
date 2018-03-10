@@ -652,7 +652,8 @@ ALTER TABLE `beneficiaires` ADD `aide_familiale` BOOLEAN NOT NULL COMMENT 'Indiq
 
 ALTER TABLE `beneficiaires_historique` ADD `aide_familiale` BOOLEAN NOT NULL COMMENT 'Indique si le bénéficiaire dispose d\'une aide familiale.' AFTER `sem4`;
 
-DROP TRIGGER IF EXISTS `after_delete_beneficiaires`;CREATE DEFINER=`root`@`localhost` TRIGGER `after_delete_beneficiaires` AFTER DELETE ON `beneficiaires` FOR EACH ROW BEGIN
+DROP TRIGGER IF EXISTS `after_delete_beneficiaires`;
+CREATE TRIGGER `after_delete_beneficiaires` AFTER DELETE ON `beneficiaires` FOR EACH ROW BEGIN
     INSERT INTO beneficiaires_historique (
   `nom`,
   `prenom`,
@@ -703,7 +704,9 @@ DROP TRIGGER IF EXISTS `after_delete_beneficiaires`;CREATE DEFINER=`root`@`local
         'D');
 END
 
-DROP TRIGGER IF EXISTS `after_update_beneficiaires`;CREATE DEFINER=`root`@`localhost` TRIGGER `after_update_beneficiaires` AFTER UPDATE ON `beneficiaires` FOR EACH ROW BEGIN
+DROP TRIGGER IF EXISTS `after_update_beneficiaires`;
+DELIMITER $$
+CREATE TRIGGER `after_update_beneficiaires` AFTER UPDATE ON `beneficiaires` FOR EACH ROW BEGIN
     INSERT INTO beneficiaires_historique (
   `nom`,
   `prenom`,
@@ -741,7 +744,7 @@ DROP TRIGGER IF EXISTS `after_update_beneficiaires`;CREATE DEFINER=`root`@`local
 		OLD.sem2,
 		OLD.sem3,
 		OLD.sem4,
-        OLD.aide_familiale,
+		OLD.aide_familiale,
 		OLD.solde_colis,
 		OLD.solde_magasin,
 		OLD.commentaire,
@@ -755,3 +758,5 @@ DROP TRIGGER IF EXISTS `after_update_beneficiaires`;CREATE DEFINER=`root`@`local
         NEW.id_utilisateur_modification,
         'U');
 END
+$$
+DELIMITER ;
