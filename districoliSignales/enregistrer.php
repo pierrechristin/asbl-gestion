@@ -48,7 +48,7 @@ $base->exec($sql);
 }
 
 //on retourne a la page benevoles
-$page="Location: ./districoli2.php";
+$page="Location: ./districoliSignales.php";
 //echo $sql;
 header($page);
 ?>

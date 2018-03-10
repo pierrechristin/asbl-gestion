@@ -11,9 +11,7 @@
 	
 </head>
 <body>
-	<div class='entete'>
-	<img src="http://<?php echo $_SERVER['HTTP_HOST'] ?>/asbl-gestion/images/loup.jpg" /> 
-	</div>
+	<?php include_once($_SERVER['DOCUMENT_ROOT'].'/asbl-gestion/commun/entete.php'); ?>
 	<div class='bloclarge' align='center'>
 		<form method="post" action="verif.php">
 			<p>Votre E-Mail :
@@ -21,9 +19,9 @@
 			votre mot de passe :
 			<input type="password" name="mdp">
 			</p>
-			<input type="submit" value="Connexion">
+			<input type="submit" name="action" value="Connexion">
+			<input type="submit" name="action" value="Visiteur">
 		</form>
-	</div>
 	</div>
 </body>
 </html>
