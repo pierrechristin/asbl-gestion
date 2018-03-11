@@ -49,13 +49,13 @@ if($module<>0)
 		// Le colis existe déjà, on charge ses informations.
 		$sql2="select * from districolis where identifiant=".$referenceColis;
 		$resultat2=$base->query($sql2);
-		$chaine2=$resultat2->fetch();
+		$colis2=$resultat2->fetch();
 		
-		$commentaire=$chaine2['commentaire'];
-		$heureDistribution=date('H',strtotime($chaine2['datedistri']));
-		$minuteDistribution=date('i',strtotime($chaine2['datedistri']));
-		$montantColis=$chaine2['montantcolis'];
-		$montantPaye=$chaine2['montantpaye'];
+		$commentaire=$colis2['commentaire'];
+		$heureDistribution=date('H',strtotime($colis2['datedistri']));
+		$minuteDistribution=date('i',strtotime($colis2['datedistri']));
+		$montantColis=$colis2['montantcolis'];
+		$montantPaye=$colis2['montantpaye'];
 	}
 	else {
 		// Le colis n'existe pas encore, on charge les informations par défaut.
@@ -170,7 +170,7 @@ if($module<>0)
 
 <?php
 
-$sqlA= "select 0 as identifiant,
+$sqlNouveauxColis= "select 0 as identifiant,
 					ref,
 					DATE(datesignalement) as jourpassage,
 					TIME(datesignalement) as heurepassage,
@@ -190,15 +190,15 @@ $sqlA= "select 0 as identifiant,
 				from beneficiaires
 				join signalement_presence on signalement_presence.refbeneficiaire = beneficiaires.ref
 				where DATE(signalement_presence.datesignalement)='";
-$sqlA=$sqlA.date("Y-m-d", mktime(0, 0, 0, 1, $jourSelectionne))."'";
-$sqlA=$sqlA." and ref not in (select refbeneficiaire from districolis where DATE(datedistri)='";
-$sqlA=$sqlA.date("Y-m-d", mktime(0, 0, 0, 1, $jourSelectionne))."'";
-$sqlA=$sqlA.")";
-$sqlA=$sqlA." group by nom, prenom";
-$sqlA=$sqlA." order by aide_familiale desc, heurepassage asc ";
-$resultatA=$base->query($sqlA);
+$sqlNouveauxColis=$sqlNouveauxColis.date("Y-m-d", mktime(0, 0, 0, 1, $jourSelectionne))."'";
+$sqlNouveauxColis=$sqlNouveauxColis." and ref not in (select refbeneficiaire from districolis where DATE(datedistri)='";
+$sqlNouveauxColis=$sqlNouveauxColis.date("Y-m-d", mktime(0, 0, 0, 1, $jourSelectionne))."'";
+$sqlNouveauxColis=$sqlNouveauxColis.")";
+$sqlNouveauxColis=$sqlNouveauxColis." group by nom, prenom";
+$sqlNouveauxColis=$sqlNouveauxColis." order by aide_familiale desc, heurepassage asc ";
+$resultatNouveauxColis=$base->query($sqlNouveauxColis);
 
-$sqlB = "select districolis.identifiant,
+$sqlColisDistribues = "select districolis.identifiant,
 					beneficiaires.ref,
 					DATE(datesignalement) as jourpassage,
 					TIME(datesignalement) as heurepassage,
@@ -219,29 +219,30 @@ $sqlB = "select districolis.identifiant,
 				join signalement_presence on signalement_presence.refbeneficiaire = beneficiaires.ref
 				where DATE(districolis.datedistri)='".date("Y-m-d", mktime(0, 0, 0, 1, $jourSelectionne))."'
 				and DATE(signalement_presence.datesignalement)='";
-$sqlB=$sqlB.date("Y-m-d", mktime(0, 0, 0, 1, $jourSelectionne))."'";
-$sqlB=$sqlB." group by nom, prenom";
-$sqlB=$sqlB." order by heurepassage asc ";
-$resultatB=$base->query($sqlB);
+$sqlColisDistribues=$sqlColisDistribues.date("Y-m-d", mktime(0, 0, 0, 1, $jourSelectionne))."'";
+$sqlColisDistribues=$sqlColisDistribues." group by nom, prenom";
+$sqlColisDistribues=$sqlColisDistribues." order by heurepassage asc ";
+$resultatColisDistribues=$base->query($sqlColisDistribues);
 
-
-
+$nouveauxColis = $resultatNouveauxColis->fetchAll();
+$colisDistribues = $resultatColisDistribues->fetchAll();
+$colisRassembles = array_merge($nouveauxColis, $colisDistribues);
 
 // affichage ligne par ligne
-while ($chaine=$resultatA->fetch())
+while ($colis=array_shift($colisRassembles))
 	{
-		//echo print_r($chaine);
+		//echo print_r($colis);
 		
 		// On détermine, ligne par ligne, quelle sera la couleur de fond.
-		if ($chaine['identifiant']==$referenceColis && $chaine['ref']==$reference)
+		if ($colis['identifiant']==$referenceColis && $colis['ref']==$reference)
 		{
 			// Colis affiché dans le formulaire
 			$bgcolor = '#78A9D4'; // bleu
 		}
-		else if ($chaine['nouveauColis'] == true)
+		else if ($colis['nouveauColis'] == true)
 		{
 			// Colis à créer
-			if ($chaine['aide_familiale'] == true)
+			if ($colis['aide_familiale'] == true)
 			{
 				// Pour un bénéficiaire qui dispose d'une aide familiale : colis à distribuer en priorité.
 				$bgcolor = '#ffcc99'; // orange
@@ -254,19 +255,19 @@ while ($chaine=$resultatA->fetch())
 		}
 ?>
 		<tr <?php if (isset($bgcolor)) {echo 'bgcolor="'.$bgcolor.'"';}?>>
-			<td><?php echo $chaine['heurepassage'];?></td>
-			<td><?php echo $chaine['prenom'];?></td>
-			<td><?php echo $chaine['nom'];?></td>
-			<td><?php echo $chaine['nbracharge'];?></td>
-			<td><?php echo $chaine['sem1'];?></td>
-			<td><?php echo $chaine['sem2'];?></td>
-			<td><?php echo $chaine['sem3'];?></td>
-			<td><?php echo $chaine['sem4'];?></td>
+			<td><?php echo $colis['heurepassage'];?></td>
+			<td><?php echo $colis['prenom'];?></td>
+			<td><?php echo $colis['nom'];?></td>
+			<td><?php echo $colis['nbracharge'];?></td>
+			<td><?php echo $colis['sem1'];?></td>
+			<td><?php echo $colis['sem2'];?></td>
+			<td><?php echo $colis['sem3'];?></td>
+			<td><?php echo $colis['sem4'];?></td>
 			<td>
 					<?php
-						if (isset($chaine['montantpaye']))
+						if (isset($colis['montantpaye']))
 						{
-							echo $chaine['montantpaye'];
+							echo $colis['montantpaye'];
 						}
 						else
 						{
@@ -274,13 +275,13 @@ while ($chaine=$resultatA->fetch())
 						}
 					?>
 			</td>
-			<td><?php echo $chaine['solde_colis'];?></td>
+			<td><?php echo $colis['solde_colis'];?></td>
 			<td width=20>
 <?php
-				if( isset($chaine['montantpaye']) == false)
+				if( isset($colis['montantpaye']) == false)
 				{
 ?>
-				<a href='districoliSignales.php?module=1<?php echo ('&reference=' . $chaine['ref'] . '&nbracharge=' . $chaine['nbracharge'] . '&sem1=' . $chaine['sem1'] . '&sem2=' . $chaine['sem2'] . '&sem3=' . $chaine['sem3'] . '&sem4=' . $chaine['sem4'] . '&solde_colis=' . $chaine['solde_colis'] . '&jourSelectionne=' . $jourSelectionne . '&montantColis=' . $montantColis);?>'>
+				<a href='districoliSignales.php?module=1<?php echo ('&reference=' . $colis['ref'] . '&nbracharge=' . $colis['nbracharge'] . '&sem1=' . $colis['sem1'] . '&sem2=' . $colis['sem2'] . '&sem3=' . $colis['sem3'] . '&sem4=' . $colis['sem4'] . '&solde_colis=' . $colis['solde_colis'] . '&jourSelectionne=' . $jourSelectionne . '&montantColis=' . $montantColis);?>'>
 					<img src='../images/inserer.jpg' width=20 height=20 title='Créer colis'/>
 				</a>
 <?php
@@ -292,10 +293,10 @@ while ($chaine=$resultatA->fetch())
 			<td width=20>
 				
 <?php				
-				if (isset($chaine['montantpaye']) ==true)
+				if (isset($colis['montantpaye']) ==true)
 				{
 ?>
-				<a href='districoliSignales.php?module=2&referenceColis=<?php echo ($chaine['identifiant'] . '&jourSelectionne=' . $jourSelectionne . '&reference=' . $chaine['ref']);?>'>
+				<a href='districoliSignales.php?module=2&referenceColis=<?php echo ($colis['identifiant'] . '&jourSelectionne=' . $jourSelectionne . '&reference=' . $colis['ref']);?>'>
 					<img src='../images/supprimer.jpg' width=20 height=20 title='Supprimer colis'/>
 				</a>
 <?php		} ?>
@@ -304,10 +305,10 @@ while ($chaine=$resultatA->fetch())
 				
 			<td width=20>
 <?php				
-				if (isset($chaine['montantpaye']) ==true)
+				if (isset($colis['montantpaye']) ==true)
 				{
 ?>
-				<a href='districoliSignales.php?module=3&referenceColis=<?php echo ($chaine['identifiant'] . '&jourSelectionne=' . $jourSelectionne . '&reference=' . $chaine['ref']);?>'>
+				<a href='districoliSignales.php?module=3&referenceColis=<?php echo ($colis['identifiant'] . '&jourSelectionne=' . $jourSelectionne . '&reference=' . $colis['ref']);?>'>
 					<img src='../images/editer.jpg' width=20 height=20 title='Modifier colis'/>
 				</a>
 <?php		} ?>
@@ -316,10 +317,10 @@ while ($chaine=$resultatA->fetch())
 			
 			<td width=20>
 <?php				
-				if (isset($chaine['montantpaye']) ==true)
+				if (isset($colis['montantpaye']) ==true)
 				{
 ?>
-				<a href='districoliSignales.php?module=4&referenceColis=<?php echo $chaine['identifiant'];?>&jourSelectionne=<?php echo ($jourSelectionne . '&reference=' . $chaine['ref']);?>'>
+				<a href='districoliSignales.php?module=4&referenceColis=<?php echo $colis['identifiant'];?>&jourSelectionne=<?php echo ($jourSelectionne . '&reference=' . $colis['ref']);?>'>
 					<img src='../images/mail.png' width=20 height=20 title='Commentaire colis'/>
 				</a>
 <?php		} ?>
@@ -328,111 +329,6 @@ while ($chaine=$resultatA->fetch())
 <?php
 		unset($bgcolor);
 	}
-	
-	// affichage ligne par ligne
-while ($chaine=$resultatB->fetch())
-	{
-		//echo print_r($chaine);
-		
-		// On détermine, ligne par ligne, quelle sera la couleur de fond.
-		if ($chaine['identifiant']==$referenceColis && $chaine['ref']==$reference)
-		{
-			// Colis affiché dans le formulaire
-			$bgcolor = '#78A9D4'; // bleu
-		}
-		else if ($chaine['nouveauColis'] == true)
-		{
-			// Colis à créer
-			if ($chaine['aide_familiale'] == true)
-			{
-				// Pour un bénéficiaire qui dispose d'une aide familiale : colis à distribuer en priorité.
-				$bgcolor = '#ffcc99'; // orange
-			}
-			else
-			{
-				// Pour un bénéficiaire qui dispose pas d'aide familiale : pas priorisation particulière.
-				$bgcolor = '#ccffcc'; // vert
-			}
-		}
-?>
-		<tr <?php if (isset($bgcolor)) {echo 'bgcolor="'.$bgcolor.'"';}?>>
-			<td><?php echo $chaine['heurepassage'];?></td>
-			<td><?php echo $chaine['prenom'];?></td>
-			<td><?php echo $chaine['nom'];?></td>
-			<td><?php echo $chaine['nbracharge'];?></td>
-			<td><?php echo $chaine['sem1'];?></td>
-			<td><?php echo $chaine['sem2'];?></td>
-			<td><?php echo $chaine['sem3'];?></td>
-			<td><?php echo $chaine['sem4'];?></td>
-			<td>
-					<?php
-						if (isset($chaine['montantpaye']))
-						{
-							echo $chaine['montantpaye'];
-						}
-						else
-						{
-							echo "Pas de colis distribué";
-						}
-					?>
-			</td>
-			<td><?php echo $chaine['solde_colis'];?></td>
-			<td width=20>
-<?php
-				if( isset($chaine['montantpaye']) == false)
-				{
-?>
-				<a href='districoliSignales.php?module=1<?php echo ('&reference=' . $chaine['ref'] . '&nbracharge=' . $chaine['nbracharge'] . '&sem1=' . $chaine['sem1'] . '&sem2=' . $chaine['sem2'] . '&sem3=' . $chaine['sem3'] . '&sem4=' . $chaine['sem4'] . '&solde_colis=' . $chaine['solde_colis'] . '&jourSelectionne=' . $jourSelectionne . '&montantColis=' . $montantColis);?>'>
-					<img src='../images/inserer.jpg' width=20 height=20 title='Créer colis'/>
-				</a>
-<?php
-				} 
-?>
-			</td>
-
-				
-			<td width=20>
-				
-<?php				
-				if (isset($chaine['montantpaye']) ==true)
-				{
-?>
-				<a href='districoliSignales.php?module=2&referenceColis=<?php echo ($chaine['identifiant'] . '&jourSelectionne=' . $jourSelectionne . '&reference=' . $chaine['ref']);?>'>
-					<img src='../images/supprimer.jpg' width=20 height=20 title='Supprimer colis'/>
-				</a>
-<?php		} ?>
-			</td>
-				
-				
-			<td width=20>
-<?php				
-				if (isset($chaine['montantpaye']) ==true)
-				{
-?>
-				<a href='districoliSignales.php?module=3&referenceColis=<?php echo ($chaine['identifiant'] . '&jourSelectionne=' . $jourSelectionne . '&reference=' . $chaine['ref']);?>'>
-					<img src='../images/editer.jpg' width=20 height=20 title='Modifier colis'/>
-				</a>
-<?php		} ?>
-			</td>
-			
-			
-			<td width=20>
-<?php				
-				if (isset($chaine['montantpaye']) ==true)
-				{
-?>
-				<a href='districoliSignales.php?module=4&referenceColis=<?php echo $chaine['identifiant'];?>&jourSelectionne=<?php echo ($jourSelectionne . '&reference=' . $chaine['ref']);?>'>
-					<img src='../images/mail.png' width=20 height=20 title='Commentaire colis'/>
-				</a>
-<?php		} ?>
-			</td>
-		</tr>
-<?php
-		unset($bgcolor);
-	}
-	
-	
-	
 ?>
 	</table>
 </div>
