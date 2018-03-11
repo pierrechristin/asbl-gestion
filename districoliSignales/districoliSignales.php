@@ -165,6 +165,7 @@ if($module<>0)
 			<th colspan=4> Semaine de présence</th>
 			<th>Paiement du jour </th>
 			<th>Solde colis</th>
+			<th>Doit en magasin</th>
 			<th colspan=4>Actions</th>
 		</tr>
 
@@ -185,6 +186,7 @@ $sqlNouveauxColis= "select 0 as identifiant,
 					null as montantcolis,
 					null as montantpaye,
 					solde_colis,
+					solde_magasin,
 					null as commentaire,
 					true as nouveauColis
 				from beneficiaires
@@ -213,6 +215,7 @@ $sqlColisDistribues = "select districolis.identifiant,
 					districolis.montantcolis,
 					districolis.montantpaye,
 					districolis.solde_colis,
+					beneficiaires.solde_magasin,
 					districolis.commentaire,
 					false as nouveauColis
 				from beneficiaires inner join districolis on beneficiaires.ref = districolis.refbeneficiaire
@@ -259,10 +262,10 @@ while ($colis=array_shift($colisRassembles))
 			<td><?php echo $colis['prenom'];?></td>
 			<td><?php echo $colis['nom'];?></td>
 			<td><?php echo $colis['nbracharge'];?></td>
-			<td><?php echo $colis['sem1'];?></td>
-			<td><?php echo $colis['sem2'];?></td>
-			<td><?php echo $colis['sem3'];?></td>
-			<td><?php echo $colis['sem4'];?></td>
+			<td width=20><?php echo $colis['sem1'];?></td>
+			<td width=20><?php echo $colis['sem2'];?></td>
+			<td width=20><?php echo $colis['sem3'];?></td>
+			<td width=20><?php echo $colis['sem4'];?></td>
 			<td>
 					<?php
 						if (isset($colis['montantpaye']))
@@ -276,6 +279,9 @@ while ($colis=array_shift($colisRassembles))
 					?>
 			</td>
 			<td><?php echo $colis['solde_colis'];?></td>
+			<td style="<?php if ($colis['solde_magasin']>0) { echo 'color: brown; font-weight: bold;'; } ?>">
+				<?php echo $colis['solde_magasin'];?>
+			</td>
 			<td width=20>
 <?php
 				if( isset($colis['montantpaye']) == false)
