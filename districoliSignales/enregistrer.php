@@ -12,7 +12,11 @@ if ($module==1 and $_POST['referenceColis']==0 and isset($_SESSION['idUtilisateu
 $sql="insert into districolis (datedistri,montantcolis,montantpaye,nbracharge,refbeneficiaire,sem1,sem2,sem3,sem4,solde_colis,id_utilisateur_creation)";
 $sql=$sql." values (\"".date('Y-m-d H:i:s',mktime($_POST['heureDistribution'],$_POST['minuteDistribution'],0, 1, $_POST['jourDistribution']))."\",\"".$_POST['montantcolis']."\",\"".$_POST['montantpaye']."\",\"".$_POST['nbracharge']."\",\"".$_POST['refbeneficiaire']."\",\"".$_POST['sem1']."\",\"".$_POST['sem2']."\",\"".$_POST['sem3']."\",\"".$_POST['sem4']."\", ".$_POST['solde_colis'] ." - ". $_POST['montantcolis']." + ". $_POST['montantpaye'].", ".$_SESSION['idUtilisateur'].")";
 $base->exec($sql);
-$sql="update beneficiaires set solde_colis=".$_POST['solde_colis'] ." - ". $_POST['montantcolis']." + ". $_POST['montantpaye'].",id_utilisateur_modification=".$_SESSION['idUtilisateur']." where ref=".$_POST['refbeneficiaire'].";";
+$sql='update beneficiaires'.' '
+	.'set solde_colis='.$_POST['solde_colis'] .' - '. $_POST['montantcolis'].' + '. $_POST['montantpaye'].','
+	.'solde_magasin=solde_magasin-'.$_POST['remboursementMagasin'].','
+	.'id_utilisateur_modification='.$_SESSION['idUtilisateur'].' '
+	.'where ref='.$_POST['refbeneficiaire'].';';
 $base->exec($sql);
 }
 
