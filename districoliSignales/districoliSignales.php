@@ -71,72 +71,85 @@ if($module<>0)
 	}
 ?>
 <div class='bloclarge' >
-	<form name='fiche' action='enregistrer.php' enctype='multipart/form-data' method='POST'>
+	<form name='fiche' action='enregistrer.php' enctype='multipart/form-data' method='POST' align='center'>
+<?php
+	if($module==1)
+	{
+?>
+		<div class='blocgauche' style="height: 110px">
+<?php
+	}
+?>
+			<h3>
+				Colis
+			</h3>
+<?php
+			if($module==1 || $module==3)
+			{
+?>
+			<div>
+				<label>Montant colis : </label>
+				<input type='number' step="0.01" name='montantcolis' value='<?php echo $montantColis?>' tabindex=1 style="width: 50px; margin-right: 10px;"/>
 
-		<table align='center' >
-			<tr>
+				<label>Montant payé : </label>
+				<input type='number' step="0.01" name='montantpaye' value='<?php echo $montantPaye?>' tabindex=2 style="width: 50px"/>
+			</div>
+
+
+			<div>
+				<label>Heure passage : </label>
+				<SELECT name="heureDistribution" size="1" tabindex=3 >
+					<?php for ($heure=0 ; $heure < 24 ; $heure = $heure + 1) { ?>
+						<OPTION  <?php if($heure==$heureDistribution){ echo "selected";} ?>> <?php echo $heure; ?>
+					<?php } ?>
+				</SELECT>
+				H
+				<SELECT name="minuteDistribution" size="1" tabindex=4 >
+					<?php for ($minute=0 ; $minute < 60 ; $minute = $minute + 1) { ?>
+					<OPTION  <?php if($minute==$minuteDistribution){ echo "selected";} ?>> <?php echo $minute; ?>
+					<?php } ?>
+				</SELECT>
+				M
+			</div>
 <?php
-				if($module==1 || $module==3)
-				{
+			} else if ($module==4)
+			{
 ?>
-				<td>
-					<div>
-						<label>Montant colis</label>
-						<input type='number' step="0.01" name='montantcolis' value='<?php echo $montantColis?>' tabindex=1 style="width: 50px"/>
-					</div>
-				</td>
-				
-				<td>
-					<div>
-						<label>Montant payé</label>
-						<input type='number' step="0.01" name='montantpaye' value='<?php echo $montantPaye?>' tabindex=2 style="width: 50px"/>
-					</div>
-				</td>
-				
-				<td>Heure passage</td>
-				<td>
-					<SELECT name="heureDistribution" size="1" tabindex=3 >
-						<?php for ($heure=0 ; $heure < 24 ; $heure = $heure + 1) { ?>
-							<OPTION  <?php if($heure==$heureDistribution){ echo "selected";} ?>> <?php echo $heure; ?>
-						<?php } ?>
-					</SELECT>
-					H
-					<SELECT name="minuteDistribution" size="1" tabindex=4 >
-						<?php for ($minute=0 ; $minute < 60 ; $minute = $minute + 1) { ?>
-						<OPTION  <?php if($minute==$minuteDistribution){ echo "selected";} ?>> <?php echo $minute; ?>
-						<?php } ?>
-					</SELECT>
-					M
-				</td>
+			<div>
+				<textarea id="commentaire" name="commentaire" tabindex=1 class="ckeditor" cols="80" rows="10">
+					<?php echo $commentaire;?>
+				</textarea>
+				<script>
+						// Replace the <textarea id="topic"> with a CKEditor
+						// instance, using default configuration.
+						CKEDITOR.replace( 'commentaire' );
+				</script>
+			</div>
 <?php
-				} else if ($module==4)
-				{
+			}
+	if($module==1)
+	{
 ?>
-				<td colspan=4 align=center>
-					<textarea id="commentaire" name="commentaire" class="ckeditor" cols="80" rows="10">
-						<?php echo $commentaire;?>
-					</textarea>
-					<script>
-							// Replace the <textarea id="topic"> with a CKEditor
-							// instance, using default configuration.
-							CKEDITOR.replace( 'commentaire' );
-					</script>
-				</td>
+		</div>
+		
+		<div class='blocdroite' style="height: 110px">
+			<h3>
+				Magasin
+			</h3>
+			<div>
+				<label>Remboursement magasin : </label>
+				<input type='number' step="0.01" name='remboursementMagasin' value='0' tabindex=5 style="width: 50px;"/>
+			</div>
+		</div>
 <?php
-				}
+	}
+		// je change la valeur du submit en fonction de la variable module
+		if ($module==1){echo "<input type='submit' style='margin-top: 16px' value='Créer colis' tabindex=6>";}
+		if ($module==2){echo "<input type='submit' style='margin-top: 16px' value='Supprimer colis' tabindex=1>";}
+		if ($module==3){echo "<input type='submit' style='margin-top: 16px' value='Modifier colis' tabindex=5>";}
+		if ($module==4){echo "<input type='submit' style='margin-top: 16px' value='Commentaire' tabindex=2>";}
 ?>
-			</tr>
-			<tr>
-				<td colspan=4 align=center>
-<?php
-				// je change la valeur du submit en fonction de la variable module
-				if ($module==1){echo "<input type='submit' value='Créer colis' tabindex=5>";}
-				if ($module==2){echo "<input type='submit' value='Supprimer colis' tabindex=5>";}
-				if ($module==3){echo "<input type='submit' value='Modifier colis' tabindex=5>";}
-				if ($module==4){echo "<input type='submit' value='Commentaire' tabindex=5>";}
-?>
-			</tr>
-		</table>
+
 		<input type='hidden' name='module' value='<?php echo $module;?>'/>
 		<input type='hidden' name='jourDistribution' value='<?php echo $jourSelectionne;?>'/>
 		<input type='hidden' name='nbracharge' value='<?php echo $nbracharge;?>'/>
