@@ -51,6 +51,24 @@ $sql="update districolis set commentaire=\"".$_POST['commentaire']."\",id_utilis
 $base->exec($sql);
 }
 
+//suppression signalement
+
+if ($module==5 and $_POST['refbeneficiaire']<>0 and isset($_POST['jourDistribution']) and isset($_SESSION['idUtilisateur']))
+{ 
+$sql='delete from signalement_presence'.' '
+		.'where refbeneficiaire='.$_POST['refbeneficiaire'].' '
+		.'and DATE(datesignalement)="'.date("Y-m-d", mktime(0, 0, 0, 1, $_POST['jourDistribution'])).'";';
+$base->exec($sql);
+
+// On indique quel utilisateur a supprimé ce signalement
+$sql2='update signalement_presence_historique'.' '
+		.'set id_utilisateur_histo='.$_SESSION['idUtilisateur'].' '
+		.'where refbeneficiaire='.$_POST['refbeneficiaire'].' '
+		.'and DATE(datesignalement)="'.date("Y-m-d", mktime(0, 0, 0, 1, $_POST['jourDistribution'])).'" '
+		.'ORDER BY date_histo DESC LIMIT 1';
+$base->exec($sql2);
+}
+
 //on retourne a la page benevoles
 $page="Location: ./districoliSignales.php";
 //echo $sql;

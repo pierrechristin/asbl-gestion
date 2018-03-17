@@ -760,3 +760,39 @@ CREATE TRIGGER `after_update_beneficiaires` AFTER UPDATE ON `beneficiaires` FOR 
 END
 $$
 DELIMITER ;
+
+
+-- 17/03/2018 - On cree une table de tracing pour un historique des suppressions de chaque signalement_presence
+CREATE TABLE `signalement_presence_historique` (
+  `id` int(11) NOT NULL, -- identifie de manière unique un signalement de présence d'un bénéficiaire.
+  `refbeneficiaire` int(11) NOT NULL, -- Identifiant du bénéficiaire afin de savoir de qui il s'agit.
+  datesignalement DATETIME,
+  
+  -- Colonnes techniques
+  date_histo DATETIME NOT NULL,
+  id_utilisateur_histo VARCHAR(20) NOT NULL,
+  evenement_histo CHAR(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ROW_FORMAT=COMPACT;
+
+DROP TRIGGER IF EXISTS `after_delete_signalement_presence`;
+DELIMITER $$
+CREATE TRIGGER after_delete_signalement_presence AFTER DELETE
+ON signalement_presence FOR EACH ROW
+BEGIN
+    INSERT INTO signalement_presence_historique (
+  `id`,
+  `refbeneficiaire`,
+  datesignalement,
+  
+  date_histo,
+  evenement_histo)
+    VALUES (
+        OLD.id,
+        OLD.refbeneficiaire,
+        OLD.datesignalement,
+
+        NOW(),
+        'D');
+END
+$$
+DELIMITER ;
