@@ -79,13 +79,27 @@ if($module<>0)
 		<div class='blocgauche' style="height: 110px">
 <?php
 	}
+	if($module==5)
+	{
+?>
+			<h3>
+				Signalement
+			</h3>
+<?php
+	}
+	else
+	{	
 ?>
 			<h3>
 				Colis
 			</h3>
+<?php		
+	}	
+?>
+			
 <?php
-			if($module==1 || $module==3)
-			{
+	if($module==1 || $module==3)
+	{
 ?>
 			<div>
 				<label>Montant colis : </label>
@@ -112,8 +126,8 @@ if($module<>0)
 				M
 			</div>
 <?php
-			} else if ($module==4)
-			{
+	} else if ($module==4)
+	{
 ?>
 			<div>
 				<textarea id="commentaire" name="commentaire" tabindex=1 class="ckeditor" cols="80" rows="10">
@@ -126,7 +140,7 @@ if($module<>0)
 				</script>
 			</div>
 <?php
-			}
+	}
 	if($module==1)
 	{
 ?>
@@ -148,6 +162,7 @@ if($module<>0)
 		if ($module==2){echo "<input type='submit' style='margin-top: 16px' value='Supprimer colis' tabindex=1>";}
 		if ($module==3){echo "<input type='submit' style='margin-top: 16px' value='Modifier colis' tabindex=5>";}
 		if ($module==4){echo "<input type='submit' style='margin-top: 16px' value='Commentaire' tabindex=2>";}
+		if ($module==5){echo "<input type='submit' style='margin-top: 16px' value='Supprimer signalement' tabindex=1>";}
 ?>
 
 		<input type='hidden' name='module' value='<?php echo $module;?>'/>
@@ -310,15 +325,21 @@ while ($colis=array_shift($colisRassembles))
 
 				
 			<td width=20>
-				
 <?php				
-				if (isset($colis['montantpaye']) ==true)
+				if (isset($colis['montantpaye']) == true)
 				{
+					$moduleSuppression = 2;
+					$titreSuppression = 'Supprimer colis';
+				}
+				else
+				{
+					$moduleSuppression = 5;
+					$titreSuppression = 'Supprimer signalement';
+				}
 ?>
-				<a href='districoliSignales.php?module=2&referenceColis=<?php echo ($colis['identifiant'] . '&jourSelectionne=' . $jourSelectionne . '&reference=' . $colis['ref']);?>'>
-					<img src='../images/supprimer.jpg' width=20 height=20 title='Supprimer colis'/>
+				<a href='districoliSignales.php?module=<?php echo ($moduleSuppression . '&referenceColis=' . $colis['identifiant'] . '&jourSelectionne=' . $jourSelectionne . '&reference=' . $colis['ref']);?>'>
+					<img src='../images/supprimer.jpg' width=20 height=20 title='<?php echo ($titreSuppression)?>'/>
 				</a>
-<?php		} ?>
 			</td>
 				
 				
