@@ -185,24 +185,26 @@ if($module<>0)
 <!-- Liste des colis du jour. -->
 <div class='bloclarge'>
 	<table border=1 align='center' style='font-size:1.2em;'>
-		<tr>
-			<th>Heure</th>
-			<th>Prénom</th>
-			<th>Nom</th>
-			<th>Nb. pers</th>
-			<th colspan=4> Semaine de présence</th>
-			<th>Paiement du jour </th>
-			<th>Solde colis</th>
-			<th>Doit en magasin</th>
-			<th colspan=4>Actions</th>
-		</tr>
-
+		<thead>
+			<tr>
+				<th>Heure</th>
+				<th>Prénom</th>
+				<th>Nom</th>
+				<th>Nb. pers</th>
+				<th colspan=4> Semaine de présence</th>
+				<th>Paiement du jour </th>
+				<th>Solde colis</th>
+				<th>Doit en magasin</th>
+				<th colspan=4>Actions</th>
+			</tr>
+		</thead>
 <?php
-
+//strtotime
+//date
 $sqlNouveauxColis= "select 0 as identifiant,
 					ref,
-					DATE(datesignalement) as jourpassage,
-					TIME(datesignalement) as heurepassage,
+					null as datepassage,
+					datesignalement as datesignalement,
 					nom,
 					prenom,
 					nbracharge,
@@ -225,13 +227,13 @@ $sqlNouveauxColis=$sqlNouveauxColis." and ref not in (select refbeneficiaire fro
 $sqlNouveauxColis=$sqlNouveauxColis.date("Y-m-d", mktime(0, 0, 0, 1, $jourSelectionne))."'";
 $sqlNouveauxColis=$sqlNouveauxColis.")";
 $sqlNouveauxColis=$sqlNouveauxColis." group by nom, prenom";
-$sqlNouveauxColis=$sqlNouveauxColis." order by aide_familiale desc, heurepassage asc ";
+$sqlNouveauxColis=$sqlNouveauxColis." order by aide_familiale desc, datesignalement asc ";
 $resultatNouveauxColis=$base->query($sqlNouveauxColis);
 
 $sqlColisDistribues = "select districolis.identifiant,
 					beneficiaires.ref,
-					DATE(datesignalement) as jourpassage,
-					TIME(datesignalement) as heurepassage,
+					datedistri as datepassage,
+					datesignalement as datesignalement,
 					beneficiaires.nom,
 					beneficiaires.prenom,
 					districolis.nbracharge,
@@ -252,12 +254,20 @@ $sqlColisDistribues = "select districolis.identifiant,
 				and DATE(signalement_presence.datesignalement)='";
 $sqlColisDistribues=$sqlColisDistribues.date("Y-m-d", mktime(0, 0, 0, 1, $jourSelectionne))."'";
 $sqlColisDistribues=$sqlColisDistribues." group by nom, prenom";
-$sqlColisDistribues=$sqlColisDistribues." order by heurepassage asc ";
+$sqlColisDistribues=$sqlColisDistribues." order by datesignalement asc ";
 $resultatColisDistribues=$base->query($sqlColisDistribues);
 
 $nouveauxColis = $resultatNouveauxColis->fetchAll();
 $colisDistribues = $resultatColisDistribues->fetchAll();
 $colisRassembles = array_merge($nouveauxColis, $colisDistribues);
+
+// Données statistiques
+$attenteMoyenne = 0;
+$nbColisDistribues = 0;
+$nbPersonnesServices = 0;
+$montantRecuColis = 0;
+$balanceColis = 0;
+$creanceMagasin = 0;
 
 // affichage ligne par ligne
 while ($colis=array_shift($colisRassembles))
@@ -286,7 +296,18 @@ while ($colis=array_shift($colisRassembles))
 		}
 ?>
 		<tr <?php if (isset($bgcolor)) {echo 'bgcolor="'.$bgcolor.'"';}?>>
-			<td><?php echo $colis['heurepassage'];?></td>
+			<td align=center>
+					<?php
+						if ($colis['nouveauColis'] == true)
+						{
+							echo (date('G:i', strtotime($colis['datesignalement'])));
+						}
+						else
+						{
+							echo (date('G:i', strtotime($colis['datepassage'])));
+						}
+					?>
+			</td>
 			<td><?php echo $colis['prenom'];?></td>
 			<td><?php echo $colis['nom'];?></td>
 			<td><?php echo $colis['nbracharge'];?></td>
@@ -296,13 +317,13 @@ while ($colis=array_shift($colisRassembles))
 			<td width=20><?php echo $colis['sem4'];?></td>
 			<td>
 					<?php
-						if (isset($colis['montantpaye']))
+						if ($colis['nouveauColis'] == true)
 						{
-							echo $colis['montantpaye'];
+							echo "Pas de colis distribué";
 						}
 						else
 						{
-							echo "Pas de colis distribué";
+							echo $colis['montantpaye'];
 						}
 					?>
 			</td>
@@ -312,7 +333,7 @@ while ($colis=array_shift($colisRassembles))
 			</td>
 			<td width=20>
 <?php
-				if( isset($colis['montantpaye']) == false)
+				if($colis['nouveauColis'] == true)
 				{
 ?>
 				<a href='districoliSignales.php?module=1<?php echo ('&reference=' . $colis['ref'] . '&nbracharge=' . $colis['nbracharge'] . '&sem1=' . $colis['sem1'] . '&sem2=' . $colis['sem2'] . '&sem3=' . $colis['sem3'] . '&sem4=' . $colis['sem4'] . '&solde_colis=' . $colis['solde_colis'] . '&jourSelectionne=' . $jourSelectionne . '&montantColis=' . $montantColis);?>'>
@@ -326,15 +347,15 @@ while ($colis=array_shift($colisRassembles))
 				
 			<td width=20>
 <?php				
-				if (isset($colis['montantpaye']) == true)
-				{
-					$moduleSuppression = 2;
-					$titreSuppression = 'Supprimer colis';
-				}
-				else
+				if ($colis['nouveauColis'] == true)
 				{
 					$moduleSuppression = 5;
 					$titreSuppression = 'Supprimer signalement';
+				}
+				else
+				{
+					$moduleSuppression = 2;
+					$titreSuppression = 'Supprimer colis';
 				}
 ?>
 				<a href='districoliSignales.php?module=<?php echo ($moduleSuppression . '&referenceColis=' . $colis['identifiant'] . '&jourSelectionne=' . $jourSelectionne . '&reference=' . $colis['ref']);?>'>
@@ -345,19 +366,19 @@ while ($colis=array_shift($colisRassembles))
 				
 			<td width=20>
 <?php				
-				if (isset($colis['montantpaye']) ==true)
+				if ($colis['nouveauColis'] == false)
 				{
 ?>
 				<a href='districoliSignales.php?module=3&referenceColis=<?php echo ($colis['identifiant'] . '&jourSelectionne=' . $jourSelectionne . '&reference=' . $colis['ref']);?>'>
 					<img src='../images/editer.jpg' width=20 height=20 title='Modifier colis'/>
 				</a>
-<?php		} ?>
+<?php			} ?>
 			</td>
 			
 			
 			<td width=20>
 <?php				
-				if (isset($colis['montantpaye']) ==true)
+				if ($colis['nouveauColis'] == false)
 				{
 ?>
 				<a href='districoliSignales.php?module=4&referenceColis=<?php echo $colis['identifiant'];?>&jourSelectionne=<?php echo ($jourSelectionne . '&reference=' . $colis['ref']);?>'>
@@ -368,8 +389,52 @@ while ($colis=array_shift($colisRassembles))
 		</tr>
 <?php
 		unset($bgcolor);
+		// Aggregation de données pour affichage de statistiques
+		if ($colis['nouveauColis'] == false)
+		{
+			// Enregistrer également les secondes du passage de la personne
+			$dateSignalement = strtotime($colis['datesignalement']);
+			$dateSignalementSansSeconde = $dateSignalement - $dateSignalement % 60;
+			$attenteMoyenne = abs(strtotime($colis['datepassage']) - $dateSignalementSansSeconde);
+			$nbColisDistribues += 1;
+			$nbPersonnesServices += $colis['nbracharge'];
+			$montantRecuColis += $colis['montantpaye'];
+			$balanceColis += $colis['solde_colis'];
+			$creanceMagasin += $colis['solde_magasin'];
+		}
 	}
 ?>
+		<tfoot>
+			<tr>
+				<th>Attente<br/>moyenne</th>
+				<th></th>
+				<th>Nb. colis<br/>distribués</th>
+				<th>Nb. personnes<br/>servies</th>
+				<th colspan=4></th>
+				<th>Montant reçu<br/>colis</th>
+				<th>Balance colis</th>
+				<th>Créance magasin</th>
+				<th colspan=4></th>
+			</tr>
+			<tr>
+				<th>
+					<?php if ($nbColisDistribues <> 0) {
+						echo date('i\m s\s', $attenteMoyenne/$nbColisDistribues);
+					} else {
+						echo 0;
+					}
+				?>
+				</th>
+				<th></th>
+				<th><?php echo $nbColisDistribues; ?></th>
+				<th><?php echo $nbPersonnesServices; ?></th>
+				<th colspan=4></th>
+				<th><?php echo $montantRecuColis; ?> €</th>
+				<th><?php echo $balanceColis; ?> €</th>
+				<th><?php echo $creanceMagasin; ?> €</th>
+				<th colspan=4></th>
+			</tr>
+		</tfoot>
 	</table>
 </div>
 
