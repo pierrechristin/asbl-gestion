@@ -194,7 +194,9 @@ if($module<>0)
 				<th colspan=4> Semaine de présence</th>
 				<th>Paiement du jour </th>
 				<th>Solde colis</th>
+<?php if ($jourSelectionne==date("z")+1) { ?>
 				<th>Doit en magasin</th>
+<?php } ?>
 				<th colspan=4>Actions</th>
 			</tr>
 		</thead>
@@ -328,9 +330,11 @@ while ($colis=array_shift($colisRassembles))
 					?>
 			</td>
 			<td><?php echo $colis['solde_colis'];?></td>
+<?php if ($jourSelectionne==date("z")+1) { ?>
 			<td style="<?php if ($colis['solde_magasin']>0) { echo 'color: brown; font-weight: bold;'; } ?>">
 				<?php echo $colis['solde_magasin'];?>
 			</td>
+<?php } ?>
 			<td width=20>
 <?php
 				if($colis['nouveauColis'] == true)
@@ -413,7 +417,9 @@ while ($colis=array_shift($colisRassembles))
 				<th colspan=4></th>
 				<th>Montant reçu<br/>colis</th>
 				<th>Balance colis</th>
+<?php if ($jourSelectionne==date("z")+1) { ?>
 				<th>Créance magasin</th>
+<?php } ?>
 				<th colspan=4></th>
 			</tr>
 			<tr>
@@ -423,7 +429,7 @@ while ($colis=array_shift($colisRassembles))
 					} else {
 						echo 0;
 					}
-				?>
+					?>
 				</th>
 				<th></th>
 				<th><?php echo $nbColisDistribues; ?></th>
@@ -431,7 +437,9 @@ while ($colis=array_shift($colisRassembles))
 				<th colspan=4></th>
 				<th><?php echo $montantRecuColis; ?> €</th>
 				<th><?php echo $balanceColis; ?> €</th>
+<?php if ($jourSelectionne==date("z")+1) { ?>
 				<th><?php echo $creanceMagasin; ?> €</th>
+<?php } ?>
 				<th colspan=4></th>
 			</tr>
 		</tfoot>
