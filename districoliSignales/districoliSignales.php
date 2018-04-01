@@ -325,14 +325,14 @@ while ($colis=array_shift($colisRassembles))
 						}
 						else
 						{
-							echo $colis['montantpaye'];
+							echo($colis['montantpaye'] . ' €');
 						}
 					?>
 			</td>
-			<td><?php echo $colis['solde_colis'];?></td>
+			<td><?php echo $colis['solde_colis'];?> €</td>
 <?php if ($jourSelectionne==date("z")+1) { ?>
 			<td style="<?php if ($colis['solde_magasin']>0) { echo 'color: brown; font-weight: bold;'; } ?>">
-				<?php echo $colis['solde_magasin'];?>
+				<?php echo $colis['solde_magasin'];?> €
 			</td>
 <?php } ?>
 			<td width=20>
