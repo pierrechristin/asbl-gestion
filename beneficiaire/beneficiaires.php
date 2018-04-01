@@ -184,7 +184,7 @@ if ($module<>0){
 					<td>
 						<input type='text'  name='solde_colis' value='<?php echo $solde_colis;?>' size=10 />
 					</td>
-					<td>Solde magasin : </td>
+					<td>Doit en magasin : </td>
 					<td>
 						<input type='text'  name='solde_magasin' value='<?php echo $solde_magasin;?>' size=10 />
 					</td>
