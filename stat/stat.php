@@ -1,0 +1,83 @@
+<?php
+
+include_once("../index.php");
+
+//initialisation de certaines variables
+
+$base=ouvrebase();
+$module=0;
+
+// critères de recherches
+?>
+<!-- Ceci est un commentaire pur HTML, tout comme le code ci-dessous. -->
+
+<!-- Recherche -->
+<div class='bloclarge'>
+	<form name='recherche1' method='POST' action='rechercher.php'>
+		<div align='center' style='font-weight:bold;'>Ventes colis global</div>
+		<table>
+			<tr>
+				<td>
+					<label>Date début</label>
+					<input type='date' name='dateDebut'/>
+					<label>Date fin</label>
+					<input type='date' name='dateFin'/>
+				</td>
+
+				<input type='hidden' name='module' value=1/>
+
+				<td>
+					<input type='submit' value='Recherche'/>
+				</td>
+			</tr>
+		</table>
+		
+	</form>
+</div>
+
+<!-- Résultats recherche -->
+<?php
+if (isset($_GET['module'])) {
+?>
+<div class='bloclarge'>
+	<div align='center' style='font-weight:bold;'>Résultats</div>
+	<table>
+		<?php
+		if (isset($_GET['sommeColisVendus']) && isset($_GET['nbColisVendus']) && isset($_GET['prixMoyenColisVendu'])) {
+		?>
+			<tr>
+				<td>
+					<p>Somme colis vendus: </p>
+				</td>
+				<td>
+					<p style='font-weight:bold;'><?php echo $_GET['sommeColisVendus'] ?> €</p>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<p>Nombre de colis vendus: </p>
+				</td>
+				<td>
+					<p style='font-weight:bold;'><?php echo $_GET['nbColisVendus'] ?></p>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<p>Prix moyen du colis payé: </p>
+				</td>
+				<td>
+					<p style='font-weight:bold;'><?php echo $_GET['prixMoyenColisVendu'] ?> €</p>
+				</td>
+			</tr>
+		<?php
+		}
+		?>
+		
+	</table>
+</div>
+<?php
+}
+?>
+<?php
+include_once("../footer.php");
+?>
