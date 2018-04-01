@@ -404,8 +404,8 @@ while ($colis=array_shift($colisRassembles))
 			$nbPersonnesServices += $colis['nbracharge'];
 			$montantRecuColis += $colis['montantpaye'];
 			$balanceColis += $colis['solde_colis'];
-			$creanceMagasin += $colis['solde_magasin'];
 		}
+		$creanceMagasin += $colis['solde_magasin'];
 	}
 ?>
 		<tfoot>
