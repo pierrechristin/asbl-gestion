@@ -98,6 +98,8 @@ while ($chaine=$resultat->fetch())
 
 // Si on revient sur l'écran suite au signalement d'un bénéficiaire au sujet de sa présence.
 else if ($signalementOK){
+$page="refresh:5;url=./signalement.php";
+header($page);
 ?>
 		<tr>
 			<td colspan=3>
