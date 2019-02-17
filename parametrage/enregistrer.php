@@ -69,8 +69,8 @@ $sql2='update signalement_presence_historique'.' '
 $base->exec($sql2);
 }
 
-//on retourne a la page Distribution Colis
-$page="Location: ./districoliSignales.php";
+//on retourne a la page Paramétrage
+$page="Location: ./parametrage.php";
 //echo $sql;
 header($page);
 ?>
