@@ -303,3 +303,8 @@ submit
     height: 32px;
     width: 32px;
 }
+
+.alerteMontant {
+    color: brown;
+    font-weight: bold;
+}

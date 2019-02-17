@@ -447,11 +447,11 @@ DELIMITER ;
 -- 22/02/2018 - Ajout d'une colonne solde pour le magasin.
 ALTER TABLE `beneficiaires` CHANGE `solde` `solde_colis` DECIMAL(10,2) NOT NULL COMMENT 'Solde colis actuel d\'un bénéficiaire';
 
-ALTER TABLE `beneficiaires` ADD `solde_magasin` DECIMAL(10,2) NOT NULL COMMENT 'Solde magasin actuel d\'un bénéficiaire' AFTER `solde_colis`;
+ALTER TABLE `beneficiaires` ADD `dette_magasin` DECIMAL(10,2) NOT NULL COMMENT 'Solde magasin actuel d\'un bénéficiaire' AFTER `solde_colis`;
 
 ALTER TABLE `beneficiaires_historique` CHANGE `solde` `solde_colis` DECIMAL(10,2) NOT NULL COMMENT 'Solde colis actuel d\'un bénéficiaire';
 
-ALTER TABLE `beneficiaires_historique` ADD `solde_magasin` DECIMAL(10,2) NOT NULL COMMENT 'Solde magasin actuel d\'un bénéficiaire' AFTER `solde_colis`;
+ALTER TABLE `beneficiaires_historique` ADD `dette_magasin` DECIMAL(10,2) NOT NULL COMMENT 'Solde magasin actuel d\'un bénéficiaire' AFTER `solde_colis`;
 
 DROP TRIGGER IF EXISTS `after_update_beneficiaires`;CREATE DEFINER=`root`@`localhost` TRIGGER `after_update_beneficiaires` AFTER UPDATE ON `beneficiaires` FOR EACH ROW BEGIN
     INSERT INTO beneficiaires_historique (
@@ -467,7 +467,7 @@ DROP TRIGGER IF EXISTS `after_update_beneficiaires`;CREATE DEFINER=`root`@`local
   `sem3`,
   `sem4`,
   `solde_colis`,
-  `solde_magasin`,
+  `dette_magasin`,
   `commentaire`,
   `jourpassage`,
   date_creation, -- date de création du beneficiaire
@@ -491,7 +491,7 @@ DROP TRIGGER IF EXISTS `after_update_beneficiaires`;CREATE DEFINER=`root`@`local
 		OLD.sem3,
 		OLD.sem4,
 		OLD.solde_colis,
-		OLD.solde_magasin,
+		OLD.dette_magasin,
 		OLD.commentaire,
 		OLD.jourpassage,
         OLD.date_creation,
@@ -518,7 +518,7 @@ DROP TRIGGER IF EXISTS `after_delete_beneficiaires`;CREATE DEFINER=`root`@`local
   `sem3`,
   `sem4`,
   `solde_colis`,
-  `solde_magasin`,
+  `dette_magasin`,
   `commentaire`,
   `jourpassage`,
   date_creation, -- date de création du beneficiaire
@@ -541,7 +541,7 @@ DROP TRIGGER IF EXISTS `after_delete_beneficiaires`;CREATE DEFINER=`root`@`local
 		OLD.sem3,
 		OLD.sem4,
 		OLD.solde_colis,
-		OLD.solde_magasin,
+		OLD.dette_magasin,
 		OLD.commentaire,
 		OLD.jourpassage,
         OLD.date_creation,
@@ -668,7 +668,7 @@ CREATE TRIGGER `after_delete_beneficiaires` AFTER DELETE ON `beneficiaires` FOR 
   `sem4`,
   `aide_familiale`,
   `solde_colis`,
-  `solde_magasin`,
+  `dette_magasin`,
   `commentaire`,
   `jourpassage`,
   date_creation, -- date de création du beneficiaire
@@ -692,7 +692,7 @@ CREATE TRIGGER `after_delete_beneficiaires` AFTER DELETE ON `beneficiaires` FOR 
 		OLD.sem4,
         OLD.aide_familiale,
 		OLD.solde_colis,
-		OLD.solde_magasin,
+		OLD.dette_magasin,
 		OLD.commentaire,
 		OLD.jourpassage,
         OLD.date_creation,
@@ -721,7 +721,7 @@ CREATE TRIGGER `after_update_beneficiaires` AFTER UPDATE ON `beneficiaires` FOR 
   `sem4`,
   `aide_familiale`,
   `solde_colis`,
-  `solde_magasin`,
+  `dette_magasin`,
   `commentaire`,
   `jourpassage`,
   date_creation, -- date de création du beneficiaire
@@ -746,7 +746,7 @@ CREATE TRIGGER `after_update_beneficiaires` AFTER UPDATE ON `beneficiaires` FOR 
 		OLD.sem4,
 		OLD.aide_familiale,
 		OLD.solde_colis,
-		OLD.solde_magasin,
+		OLD.dette_magasin,
 		OLD.commentaire,
 		OLD.jourpassage,
         OLD.date_creation,
@@ -795,4 +795,119 @@ BEGIN
         'D');
 END
 $$
+DELIMITER ;
+
+-- 10/06/2018 - On renomme la colonne "dette_magasin" de la table bénéficaire en "dette_magasin" pour plus de clareté.
+ALTER TABLE `beneficiaires` CHANGE `dette_magasin` `dette_magasin` DECIMAL(10,2) NOT NULL COMMENT 'Cumul des dettes actuelles d&#039;un bénéficiaire pour le magasin';
+
+ALTER TABLE `beneficiaires_historique` CHANGE `dette_magasin` `dette_magasin` DECIMAL(10,2) NOT NULL COMMENT 'Cumul des dettes actuelles d&#039;un bénéficiaire pour le magasin';
+
+DELIMITER $$
+
+DROP TRIGGER IF EXISTS `after_delete_beneficiaires`;CREATE DEFINER=`root`@`localhost` TRIGGER `after_delete_beneficiaires` AFTER DELETE ON `beneficiaires` FOR EACH ROW BEGIN
+    INSERT INTO beneficiaires_historique (
+  `nom`,
+  `prenom`,
+  `tel`,
+  `adresse`,
+  `nbracharge`,
+  `heurepassage`,
+  `ref`,
+  `sem1`,
+  `sem2`,
+  `sem3`,
+  `sem4`,
+  `aide_familiale`,
+  `solde_colis`,
+  `dette_magasin`,
+  `commentaire`,
+  `jourpassage`,
+  date_creation, -- date de création du beneficiaire
+  id_utilisateur_creation, -- utilisateur ayant créé le beneficiaire
+  date_modification, -- date de dernière modification du beneficiaire
+  id_utilisateur_modification,
+  
+  date_histo,
+  evenement_histo)
+    VALUES (
+        OLD.nom,
+        OLD.prenom,
+        OLD.tel,
+        OLD.adresse,
+        OLD.nbracharge,
+        OLD.heurepassage,
+        OLD.ref,
+		OLD.sem1,
+		OLD.sem2,
+		OLD.sem3,
+		OLD.sem4,
+        OLD.aide_familiale,
+		OLD.solde_colis,
+		OLD.dette_magasin,
+		OLD.commentaire,
+		OLD.jourpassage,
+        OLD.date_creation,
+        OLD.id_utilisateur_creation,
+        OLD.date_modification,
+        OLD.id_utilisateur_modification,
+
+        NOW(),
+        'D');
+END
+$$
+
+DROP TRIGGER IF EXISTS `after_update_beneficiaires`;CREATE DEFINER=`root`@`localhost` TRIGGER `after_update_beneficiaires` AFTER UPDATE ON `beneficiaires` FOR EACH ROW BEGIN
+    INSERT INTO beneficiaires_historique (
+  `nom`,
+  `prenom`,
+  `tel`,
+  `adresse`,
+  `nbracharge`,
+  `heurepassage`,
+  `ref`,
+  `sem1`,
+  `sem2`,
+  `sem3`,
+  `sem4`,
+  `aide_familiale`,
+  `solde_colis`,
+  `dette_magasin`,
+  `commentaire`,
+  `jourpassage`,
+  date_creation, -- date de création du beneficiaire
+  id_utilisateur_creation, -- utilisateur ayant créé le beneficiaire
+  date_modification, -- date de dernière modification du beneficiaire
+  id_utilisateur_modification,
+  
+  date_histo,
+  id_utilisateur_histo,
+  evenement_histo)
+    VALUES (
+        OLD.nom,
+        OLD.prenom,
+        OLD.tel,
+        OLD.adresse,
+        OLD.nbracharge,
+        OLD.heurepassage,
+        OLD.ref,
+		OLD.sem1,
+		OLD.sem2,
+		OLD.sem3,
+		OLD.sem4,
+		OLD.aide_familiale,
+		OLD.solde_colis,
+		OLD.dette_magasin,
+		OLD.commentaire,
+		OLD.jourpassage,
+        OLD.date_creation,
+        OLD.id_utilisateur_creation,
+        OLD.date_modification,
+        OLD.id_utilisateur_modification,
+
+        NOW(),
+        NEW.id_utilisateur_modification,
+        'U');
+END
+&&
+
 DELIMITER ;
