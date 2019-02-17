@@ -911,3 +911,6 @@ END
 &&
 
 DELIMITER ;
+
+-- 17/02/2018 - On change le montant par défaut des colis alimentaires, passant de 4€ à 5€.
+UPDATE `parametres` SET `valeur` = '5' WHERE `parametres`.`cle` = 'MONTANT_COLIS_PAR_DEFAUT'
