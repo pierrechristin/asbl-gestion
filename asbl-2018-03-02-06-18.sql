@@ -55,7 +55,7 @@ CREATE TABLE `beneficiaires` (
   `sem4` tinyint(1) NOT NULL,
   `aide_familiale` tinyint(1) NOT NULL COMMENT 'Indique si le bénéficiaire dispose d''une aide familiale.',
   `solde_colis` decimal(10,2) NOT NULL COMMENT 'Solde colis actuel d''un bénéficiaire',
-  `solde_magasin` decimal(10,2) NOT NULL COMMENT 'Solde magasin actuel d''un bénéficiaire',
+  `dette_magasin` decimal(10,2) NOT NULL COMMENT 'Solde magasin actuel d''un bénéficiaire',
   `commentaire` mediumtext COLLATE utf8_unicode_ci NOT NULL COMMENT 'Commentaire actuel d''un bénéficaire',
   `jourpassage` int(3) NOT NULL,
   `date_creation` datetime DEFAULT NULL,
@@ -68,7 +68,7 @@ CREATE TABLE `beneficiaires` (
 -- Déchargement des données de la table `beneficiaires`
 --
 
-INSERT INTO `beneficiaires` (`nom`, `prenom`, `tel`, `adresse`, `nbracharge`, `heurepassage`, `ref`, `sem1`, `sem2`, `sem3`, `sem4`, `aide_familiale`, `solde_colis`, `solde_magasin`, `commentaire`, `jourpassage`, `date_creation`, `id_utilisateur_creation`, `date_modification`, `id_utilisateur_modification`) VALUES
+INSERT INTO `beneficiaires` (`nom`, `prenom`, `tel`, `adresse`, `nbracharge`, `heurepassage`, `ref`, `sem1`, `sem2`, `sem3`, `sem4`, `aide_familiale`, `solde_colis`, `dette_magasin`, `commentaire`, `jourpassage`, `date_creation`, `id_utilisateur_creation`, `date_modification`, `id_utilisateur_modification`) VALUES
 ('REBULL', 'VINCENT', '', '', 1, '09:00:00', 1, 1, 1, 1, 0, 0, '0.00', '0.00', '', 5, '2018-02-22 20:39:56', 6, '2018-02-23 11:16:08', 15),
 ('REBULL', 'LOMBARDO', '0477433044', '', 4, '09:00:00', 2, 1, 1, 1, 0, 0, '0.00', '0.00', '', 5, '2018-02-22 20:42:50', 6, '2018-02-23 11:15:56', 15),
 ('DEMOUSTIER', 'PAUL', '', '', 1, '09:00:00', 3, 0, 0, 0, 0, 0, '-4.00', '0.00', '', 5, '2018-02-22 20:47:31', 6, '2018-02-22 23:19:16', 7),
@@ -211,7 +211,7 @@ CREATE TRIGGER `after_delete_beneficiaires` AFTER DELETE ON `beneficiaires` FOR 
   `sem4`,
   `aide_familiale`,
   `solde_colis`,
-  `solde_magasin`,
+  `dette_magasin`,
   `commentaire`,
   `jourpassage`,
   date_creation, -- date de création du beneficiaire
@@ -235,7 +235,7 @@ CREATE TRIGGER `after_delete_beneficiaires` AFTER DELETE ON `beneficiaires` FOR 
 		OLD.sem4,
         OLD.aide_familiale,
 		OLD.solde_colis,
-		OLD.solde_magasin,
+		OLD.dette_magasin,
 		OLD.commentaire,
 		OLD.jourpassage,
         OLD.date_creation,
@@ -264,7 +264,7 @@ CREATE TRIGGER `after_update_beneficiaires` AFTER UPDATE ON `beneficiaires` FOR 
   `sem4`,
   `aide_familiale`,
   `solde_colis`,
-  `solde_magasin`,
+  `dette_magasin`,
   `commentaire`,
   `jourpassage`,
   date_creation, -- date de création du beneficiaire
@@ -289,7 +289,7 @@ CREATE TRIGGER `after_update_beneficiaires` AFTER UPDATE ON `beneficiaires` FOR 
 		OLD.sem4,
 		OLD.aide_familiale,
 		OLD.solde_colis,
-		OLD.solde_magasin,
+		OLD.dette_magasin,
 		OLD.commentaire,
 		OLD.jourpassage,
         OLD.date_creation,
@@ -336,7 +336,7 @@ CREATE TABLE `beneficiaires_historique` (
   `sem4` tinyint(1) NOT NULL,
   `aide_familiale` tinyint(1) NOT NULL COMMENT 'Indique si le bénéficiaire dispose d''une aide familiale.',
   `solde_colis` decimal(10,2) NOT NULL COMMENT 'Solde colis actuel d''un bénéficiaire',
-  `solde_magasin` decimal(10,2) NOT NULL COMMENT 'Solde magasin actuel d''un bénéficiaire',
+  `dette_magasin` decimal(10,2) NOT NULL COMMENT 'Solde magasin actuel d''un bénéficiaire',
   `commentaire` mediumtext COLLATE utf8_unicode_ci NOT NULL COMMENT 'Commentaire actuel d''un bénéficaire',
   `jourpassage` int(3) NOT NULL,
   `date_creation` datetime DEFAULT NULL,
@@ -352,7 +352,7 @@ CREATE TABLE `beneficiaires_historique` (
 -- Déchargement des données de la table `beneficiaires_historique`
 --
 
-INSERT INTO `beneficiaires_historique` (`nom`, `prenom`, `tel`, `adresse`, `nbracharge`, `heurepassage`, `ref`, `sem1`, `sem2`, `sem3`, `sem4`, `aide_familiale`, `solde_colis`, `solde_magasin`, `commentaire`, `jourpassage`, `date_creation`, `id_utilisateur_creation`, `date_modification`, `id_utilisateur_modification`, `date_histo`, `id_utilisateur_histo`, `evenement_histo`) VALUES
+INSERT INTO `beneficiaires_historique` (`nom`, `prenom`, `tel`, `adresse`, `nbracharge`, `heurepassage`, `ref`, `sem1`, `sem2`, `sem3`, `sem4`, `aide_familiale`, `solde_colis`, `dette_magasin`, `commentaire`, `jourpassage`, `date_creation`, `id_utilisateur_creation`, `date_modification`, `id_utilisateur_modification`, `date_histo`, `id_utilisateur_histo`, `evenement_histo`) VALUES
 ('GRASSI', 'LORENZO', '0477 26 58 17', '', 0, '10:15:00', 4, 1, 1, 1, 0, 0, '0.00', '0.00', '', 5, '2018-02-22 20:48:04', 6, NULL, NULL, '2018-02-22 20:48:45', '6', 'U'),
 ('GRASSI', 'LORENZO', '0477 26 58 17', '', 0, '10:15:00', 4, 1, 1, 1, 0, 0, '0.00', '0.00', '', 5, '2018-02-22 20:48:04', 6, '2018-02-22 20:48:45', 6, '2018-02-22 20:50:31', '6', 'U'),
 ('DEMOUSTIER', 'PAUL', '', '', 1, '09:00:00', 3, 0, 0, 0, 0, 0, '0.00', '0.00', '', 5, '2018-02-22 20:47:31', 6, NULL, NULL, '2018-02-22 21:18:18', '6', 'U'),
