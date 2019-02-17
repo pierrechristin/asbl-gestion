@@ -14,7 +14,7 @@ $sql=$sql." values (\"".date('Y-m-d H:i:s',mktime($_POST['heureDistribution'],$_
 $base->exec($sql);
 $sql='update beneficiaires'.' '
 	.'set solde_colis='.$_POST['solde_colis'] .' - '. $_POST['montantcolis'].' + '. $_POST['montantpaye'].','
-	.'solde_magasin=solde_magasin-'.$_POST['remboursementMagasin'].','
+	.'dette_magasin='.$_POST['nouvellesDettesMagasin'].','
 	.'id_utilisateur_modification='.$_SESSION['idUtilisateur'].' '
 	.'where ref='.$_POST['refbeneficiaire'].';';
 $base->exec($sql);

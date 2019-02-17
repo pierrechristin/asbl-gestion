@@ -119,7 +119,7 @@ while ($chaine=$resultat->fetch())
 
 
 <?php
-$nom='';$prenom='';$tel='';$adresse='';$nbracharge='';$solde_colis='';$solde_magasin='';$sem1='';$sem2='';$sem3='';$sem4='';$aide_familiale='';$jourPassage='';$heurePassage='';$minutePassage='';
+$nom='';$prenom='';$tel='';$adresse='';$nbracharge='';$solde_colis='';$dette_magasin='';$sem1='';$sem2='';$sem3='';$sem4='';$aide_familiale='';$jourPassage='';$heurePassage='';$minutePassage='';
 
 	//si modifier ou supprimer fiche récupérer les valeurs
 	
@@ -135,7 +135,7 @@ $nom='';$prenom='';$tel='';$adresse='';$nbracharge='';$solde_colis='';$solde_mag
 		$adresse=$chaine2['adresse'];
 		$nbracharge=$chaine2['nbracharge'];
 		$solde_colis=$chaine2['solde_colis'];
-		$solde_magasin=$chaine2['solde_magasin'];
+		$dette_magasin=$chaine2['dette_magasin'];
 		$sem1=$chaine2['sem1'];
 		$sem2=$chaine2['sem2'];
 		$sem3=$chaine2['sem3'];
@@ -186,7 +186,7 @@ if ($module<>0){
 					</td>
 					<td>Doit en magasin : </td>
 					<td>
-						<input type='text'  name='solde_magasin' value='<?php echo $solde_magasin;?>' size=10 />
+						<input type='text'  name='dette_magasin' value='<?php echo $dette_magasin;?>' size=10 />
 					</td>
 				</tr>
 				<tr>			

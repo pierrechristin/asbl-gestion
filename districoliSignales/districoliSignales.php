@@ -27,6 +27,7 @@ if (isset($_GET['sem2'])) {$sem2=$_GET['sem2'];}
 if (isset($_GET['sem3'])) {$sem3=$_GET['sem3'];}
 if (isset($_GET['sem4'])) {$sem4=$_GET['sem4'];}
 if (isset($_GET['solde_colis'])) {$solde_colis=$_GET['solde_colis'];}
+if (isset($_GET['dettesMagasinActuelles'])) {$dettesMagasinActuelles=$_GET['dettesMagasinActuelles'];}
 if (isset($_GET['reference'])) {$reference=$_GET['reference'];}
 if (isset($_GET['referenceColis'])) {$referenceColis=$_GET['referenceColis'];}
 if (isset($_GET['commentaire'])) {$commentaire=$_GET['commentaire'];}
@@ -151,14 +152,18 @@ if($module<>0)
 				Magasin
 			</h3>
 			<div>
-				<label>Remboursement magasin : </label>
-				<input type='number' step="0.01" name='remboursementMagasin' value='0' tabindex=5 style="width: 50px;"/>
+				<label>Dettes actuelles : </label>
+				<input type='number' step="0.01" name='dettesMagasinActuelles' value='<?php echo $dettesMagasinActuelles ?>' tabindex=5 style="width: 50px;" disabled/>
+			</div>
+			<div>
+				<label>Nouvelles dettes : </label>
+				<input type='number' step="0.01" name='nouvellesDettesMagasin' value='<?php echo $dettesMagasinActuelles ?>' tabindex=6 style="width: 50px;"/>
 			</div>
 		</div>
 <?php
 	}
 		// je change la valeur du submit en fonction de la variable module
-		if ($module==1){echo "<input type='submit' style='margin-top: 16px' value='Créer colis' tabindex=6>";}
+		if ($module==1){echo "<input type='submit' style='margin-top: 16px' value='Créer colis' tabindex=7>";}
 		if ($module==2){echo "<input type='submit' style='margin-top: 16px' value='Supprimer colis' tabindex=1>";}
 		if ($module==3){echo "<input type='submit' style='margin-top: 16px' value='Modifier colis' tabindex=5>";}
 		if ($module==4){echo "<input type='submit' style='margin-top: 16px' value='Commentaire' tabindex=2>";}
@@ -218,7 +223,7 @@ $sqlNouveauxColis= "select 0 as identifiant,
 					null as montantcolis,
 					null as montantpaye,
 					solde_colis,
-					solde_magasin,
+					dette_magasin,
 					null as commentaire,
 					true as nouveauColis
 				from beneficiaires
@@ -247,7 +252,7 @@ $sqlColisDistribues = "select districolis.identifiant,
 					districolis.montantcolis,
 					districolis.montantpaye,
 					districolis.solde_colis,
-					beneficiaires.solde_magasin,
+					beneficiaires.dette_magasin,
 					districolis.commentaire,
 					false as nouveauColis
 				from beneficiaires inner join districolis on beneficiaires.ref = districolis.refbeneficiaire
@@ -329,10 +334,12 @@ while ($colis=array_shift($colisRassembles))
 						}
 					?>
 			</td>
-			<td><?php echo $colis['solde_colis'];?> €</td>
+			<td <?php if ($colis['solde_colis']<0) { echo 'class="alerteMontant"'; } ?>>
+				<?php echo $colis['solde_colis'];?> €
+			</td>
 <?php if ($jourSelectionne==date("z")+1) { ?>
-			<td style="<?php if ($colis['solde_magasin']>0) { echo 'color: brown; font-weight: bold;'; } ?>">
-				<?php echo $colis['solde_magasin'];?> €
+			<td <?php if ($colis['dette_magasin']>0) { echo 'class="alerteMontant"'; } ?>>
+				<?php echo $colis['dette_magasin'];?> €
 			</td>
 <?php } ?>
 			<td width=20>
@@ -340,7 +347,7 @@ while ($colis=array_shift($colisRassembles))
 				if($colis['nouveauColis'] == true)
 				{
 ?>
-				<a href='districoliSignales.php?module=1<?php echo ('&reference=' . $colis['ref'] . '&nbracharge=' . $colis['nbracharge'] . '&sem1=' . $colis['sem1'] . '&sem2=' . $colis['sem2'] . '&sem3=' . $colis['sem3'] . '&sem4=' . $colis['sem4'] . '&solde_colis=' . $colis['solde_colis'] . '&jourSelectionne=' . $jourSelectionne . '&montantColis=' . $montantColis);?>'>
+				<a href='districoliSignales.php?module=1<?php echo ('&reference=' . $colis['ref'] . '&nbracharge=' . $colis['nbracharge'] . '&sem1=' . $colis['sem1'] . '&sem2=' . $colis['sem2'] . '&sem3=' . $colis['sem3'] . '&sem4=' . $colis['sem4'] . '&solde_colis=' . $colis['solde_colis'] . '&jourSelectionne=' . $jourSelectionne . '&montantColis=' . $montantColis . '&dettesMagasinActuelles=' . $colis['dette_magasin']);?>'>
 					<img src='../images/inserer.jpg' width=20 height=20 title='Créer colis'/>
 				</a>
 <?php
@@ -405,7 +412,7 @@ while ($colis=array_shift($colisRassembles))
 			$montantRecuColis += $colis['montantpaye'];
 			$balanceColis += $colis['solde_colis'];
 		}
-		$creanceMagasin += $colis['solde_magasin'];
+		$creanceMagasin += $colis['dette_magasin'];
 	}
 ?>
 		<tfoot>
